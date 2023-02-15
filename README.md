@@ -4,4 +4,4 @@
 
 > But anyway, have a nice day!
 
-# Benjamin Pan @ Hubu
+By Benjamin Pan @ Hubu
