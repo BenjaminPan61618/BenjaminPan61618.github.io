@@ -1,4 +1,3 @@
-theme: Tactile
 # BenjaminPan61618.github.io
 > I'm Benjamin Pan. This is my attempt page.
 You know what?
