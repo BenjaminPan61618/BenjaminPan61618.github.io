@@ -1,5 +1,5 @@
 # BenjaminPan61618.github.io
-> I'm Benjamin Pan. This is my attempt page.
+> I'm Benjamin Pan. This is my page of attempt.
 You know what?
 This is quite boring...
 
