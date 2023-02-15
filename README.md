@@ -1,3 +1,4 @@
+theme: Tactile
 # BenjaminPan61618.github.io
 > I'm Benjamin Pan. This is my attempt page.
 You know what?
@@ -10,3 +11,6 @@ This is quite boring...
 > But anyway, have a nice day!
 
 By Benjamin Pan @ Hubu
+
+> 你好呀，路过的好心人、
+> 这是我的一个测试页面
