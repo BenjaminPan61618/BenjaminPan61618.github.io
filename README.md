@@ -1,6 +1,5 @@
-
-#<center>BenjaminPan61618.github.io</center>
-##Greetings!
+# <center>BenjaminPan61618.github.io</center>
+## Greetings!
 Welcome to my Web Page of attempt!
 I'm glad that you can arrive here.
 
@@ -10,7 +9,7 @@ I'm glad that you can arrive here.
 > This is quite boring.
 > But anyway, have a nice day!
 
-##你好！
+## 你好！
 你好呀，路过的好心人！
 欢迎来到我的第一个网页。
 很高兴你能来到这里。
