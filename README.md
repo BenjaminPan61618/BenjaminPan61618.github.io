@@ -23,7 +23,7 @@ I'm glad that you can arrive here.
 ## ¡Hola!
 ¡Gracias!
 
-#Hello, World!\
+# Hello, World!\
 C:
 >  &#35;include &#60;stdio.h&#62;\
 >&#32;&#32;int main()\
