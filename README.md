@@ -23,41 +23,41 @@ I'm glad that you can arrive here.
 ## ¡Hola!
 ¡Gracias!
 
-# Hello, World!\
+# Hello, World!
 C:
->  &#35;include &#60;stdio.h&#62;\
->&#32;&#32;int main()\
->{\
->printf ("Hello, World);\
->return 0;\
->}
+> &#35;include &#60;stdio.h&#62;\
+> &#32;&#32;int main()\
+> {\
+> printf ("Hello, World!");\
+> return 0;\
+> }
 
 C++:
 > &#35;include &#60;iostream&#62;\
 > &#32;&#32;using namespace std;\
->&#32;&#32;int main()\
->{\
->cout&#60;&#60;"Hello, World"<<endl;\
->return 0;\
->}
+> &#32;&#32;int main()\
+> {\
+> cout&#60;&#60;"Hello, World!"<<endl;\
+> return 0;\
+> }
 
 Visual Basic:
->Private Sub Form_Load()\
->Msgbox "Hello, World.",vbInformation, "Hello,World!"\
->End sub
+> Private Sub Form_Load()\
+> Msgbox "Hello, World!",vbInformation, "Hello,World!"\
+> End sub
 
 Markdown:
-> &#35; Hello, World.
+> &#35; Hello, World!
 
 HTML:
->&#60;html&#62;\
->&#60;head&#62;\
->&#60;title>"Hello, World"&#60;/title&#62;\
-&#60;/head&#62;\
-&#60;body&#62;\
-Hello,World.\
-&#60;/body&#62;\
-&#60;/html&#62;
+> &#60;html&#62;\
+> &#60;head&#62;\
+> &#60;title>"Hello, World"&#60;/title&#62;\
+> &#60;/head&#62;\
+> &#60;body&#62;\
+> Hello,World!\
+> &#60;/body&#62;\
+> &#60;/html&#62;
 
 
 
