@@ -5,6 +5,4 @@ Homepage: <a href="https://BenjaminPan61618.github.io/home">Take me to the homep
 
 <center>2023</center>
 <center>By Benjamin Pan @ Hubu</center>
-
-<center>Written in Haroopad</center>
 <center>BenjaminPan61618.github.io</center>
