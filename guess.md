@@ -6,3 +6,10 @@
 4.不仅魅力十足，还有强大的实力，能够带领众勇士在天界抵抗邪神的侵扰。无论是站在幕后呼声最高的粉丝还是新加入者，都可以看到她独特而出色的表现。\
 5.无法跨过门禁，说明是易推倒体质，所以时常脸红、流汗。\
 6.曾改编过《唐多令·芦叶满汀洲》，并流传甚远。
+
+1.Nekopara.\
+2.The painter who drew Thousands of miles of gangneung map (Bing Translator).\
+3.Musician who made Dayuhaitang, Blossoms along the way, Two tigers, Borrowing Five Hundred Years From The Lord Again. \
+4.Attractive, strong ability, unique and excellent to fight against evils.
+5.Restricted by the gate. \
+6.Adapted 《唐多令·芦叶满汀洲》and made it popular again..
