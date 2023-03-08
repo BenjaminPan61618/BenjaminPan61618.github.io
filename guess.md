@@ -10,6 +10,6 @@
 1.Nekopara.\
 2.The painter who drew Thousands of miles of gangneung map (Bing Translator).\
 3.Musician who made Dayuhaitang, Blossoms along the way, Two tigers, Borrowing Five Hundred Years From The Lord Again. \
-4.Attractive, strong ability, unique and excellent to fight against evils.
+4.Attractive, strong ability, unique and excellent to fight against evils. \
 5.Restricted by the gate. \
 6.Adapted 《唐多令·芦叶满汀洲》and made it popular again..
