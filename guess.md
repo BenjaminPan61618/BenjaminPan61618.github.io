@@ -7,6 +7,9 @@
 5.无法跨过门禁，说明是易推倒体质，所以时常脸红、流汗。\
 6.曾改编过《唐多令·芦叶满汀洲》，并流传甚远。
 
+<center><img decoding="async" src="https://BenjaminPan61618.github.io/5ae25f6f94251f31.png></center>
+<center> 毋须多言，你一定猜的出来是谁 </center>
+
 1.Nekopara.\
 2.The painter who drew Thousands of miles of gangneung map (Bing Translator).\
 3.Musician who made Dayuhaitang, Blossoms along the way, Two tigers, Borrowing Five Hundred Years From The Lord Again. \
