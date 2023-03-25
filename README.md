@@ -59,10 +59,11 @@ HTML:
 > &#60;/body&#62;\
 > &#60;/html&#62;
 
-Rust:\
+Rust:
 > fn main(){\
 > println!("Hello, World!");\
 > }
+
 
 
 <center>2023</center>
