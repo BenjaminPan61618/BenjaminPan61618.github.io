@@ -60,9 +60,9 @@ HTML:
 > &#60;/html&#62;
 
 Rust:\
-fn main(){\
-println!("Hello, World!");\
-}
+> fn main(){\
+> println!("Hello, World!");\
+> }
 
 
 <center>2023</center>
