@@ -25,26 +25,31 @@ I'm glad that you can arrive here.
 
 # Hello, World!
 C:
-> &#35;include &#60;stdio.h&#62;\
-> &#32;&#32;int main()\
-> {\
-> printf ("Hello, World!");\
-> return 0;\
-> }
-
+```cpp
+#include <stdio.h>
+int main()
+   {
+   printf ("Hello, World!");
+   return 0;
+   }
+```
 C++:
-> &#35;include &#60;iostream&#62;\
-> &#32;&#32;using namespace std;\
-> &#32;&#32;int main()\
-> {\
-> cout&#60;&#60;"Hello, World!"<<endl;\
-> return 0;\
-> }
+```cpp
+ #include <iostream>
+   using namespace std;
+   int main()
+ {
+   cout<<"Hello, World!"<<endl;
+   return 0;
+ }
+```
 
 Visual Basic:
-> Private Sub Form_Load()\
-> Msgbox "Hello, World!",vbInformation, "Hello,World!"\
-> End sub
+```vb
+Private Sub Form_Load()
+Msgbox "Hello, World!",vbInformation, "Hello,World!"\
+End sub
+```
 
 Markdown:
 > &#35; Hello, World!
@@ -60,10 +65,11 @@ HTML:
 > &#60;/html&#62;
 
 Rust:
-> fn main(){\
-> println!("Hello, World!");\
-> }
-
+```rust
+fn main(){
+println!("Hello, World!");
+}
+```
 
 
 <center>2023</center>
