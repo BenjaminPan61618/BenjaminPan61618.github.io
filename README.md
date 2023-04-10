@@ -47,7 +47,7 @@ C++:
 Visual Basic:
 ```vb
 Private Sub Form_Load()
-Msgbox "Hello, World!",vbInformation, "Hello,World!"\
+Msgbox "Hello, World!",vbInformation, "Hello,World!"
 End sub
 ```
 
