@@ -1,9 +1,9 @@
 # Experiments
 ### C++ Experiments / C++ 实验
-最近一次作业: <a href="https://github.com/BenjaminPan61618/Experiments/IV"> IV - 第4次上机(实验四)  - 四月十五日 提交 / Added on April 15th </a>\
-可以使用 git clone https://github.com/BenjaminPan61618/Experiments/{次数的罗马数字}/ 下载,例如:
+最近一次作业: <a href="https://github.com/BenjaminPan61618/Experiments/tree/main/IV"> IV - 第4次上机(实验四)  - 四月十五日 提交 / Added on April 15th </a>\
+安装 git 后，可以使用 git clone 语句下载:
 ```shell
-git clone https://github.com/BenjaminPan61618/Experiments/IV/
+git clone https://github.com/BenjaminPan61618/Experiments.git
 ```
 通过这样的方式还可以下载到.zip压缩格式:
 
