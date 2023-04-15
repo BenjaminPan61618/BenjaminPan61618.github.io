@@ -9,6 +9,7 @@ I'm glad that you can arrive here.
 > This is quite boring.\
 > But anyway, have a nice day!
 
+
 ## 你好！
 你好呀，路过的好心人！\
 欢迎来到我的第一个网页。\
@@ -70,10 +71,12 @@ fn main(){
 println!("Hello, World!");
 }
 ```
-
+<div align="right"><a href="https://BenjaminPan61618.github.io/Experiments/">前往我的C++实验页面-></a></div>
 
 <center>2023</center>
 <center>By Benjamin Pan @ Hubu</center>
 
 <center>Written in Haroopad</center>
 <center>BenjaminPan61618.github.io</center>
+
+
