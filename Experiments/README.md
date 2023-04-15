@@ -5,6 +5,8 @@
 ```shell
 git clone https://github.com/BenjaminPan61618/Experiments.git
 ```
-通过这样的方式还可以下载到.zip压缩格式:
+#### 注意: 请先安装 git！
+
+另外，通过这样的方式还可以下载到.zip压缩格式:
 
 ![Picture](https://BenjaminPan61618.github.io/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-04-15%20122014.png)
