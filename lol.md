@@ -10,4 +10,4 @@
 
 🥳活动日期无截止，心动不如行动，快来参加吧！🎉
 
-<div align="right"><a href="https://BenjaminPan61618.github.io/lol_success">立即报名</a></div>
+<div align="right"><a href="https://BenjaminPan61618.github.io/lol_success">立即报名→</a></div>
