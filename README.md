@@ -75,7 +75,7 @@ println!("Hello, World!");
 <div align="right"><a href="https://github.com/BenjaminPan61618/BenjaminPan61618.github.io/issues">问题反馈 / Issues-></a></div>
 <center>2023</center>
 <center>By Benjamin Pan @ Hubu</center>
-
+<center> 本站采用 GNU GPL V3 许可证授权 </center>
 <center>Written in Haroopad</center>
 <center>BenjaminPan61618.github.io</center>
 
