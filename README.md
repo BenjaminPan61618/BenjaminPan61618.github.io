@@ -72,7 +72,7 @@ println!("Hello, World!");
 }
 ```
 <div align="right"><a href="https://BenjaminPan61618.github.io/Experiments/">前往我的C++实验页面-></a></div>
-
+<div align="right"><a href="https://github.com/BenjaminPan61618/BenjaminPan61618.github.io/issues">问题反馈 / Issues-></a></div>
 <center>2023</center>
 <center>By Benjamin Pan @ Hubu</center>
 
