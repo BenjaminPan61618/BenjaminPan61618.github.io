@@ -1,6 +1,6 @@
 # Experiments
 ### C++ Experiments / C++ 实验
-最近一次作业: <a href="https://github.com/BenjaminPan61618/Experiments/tree/main/V"> V - 第5次上机(实验四)  - 5月5日 提交 / Added on May 5th </a>\
+最近一次作业: <a href="https://github.com/BenjaminPan61618/Experiments/tree/main/VI"> 第6次上机(实验六)  - 5月28日 提交 / Added on May 28th </a>\
 安装 git 后，可以使用 git clone 语句下载:
 ```shell
 git clone https://github.com/BenjaminPan61618/Experiments.git
