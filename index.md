@@ -1,4 +1,4 @@
-/Forbidden
+# Forbidden
 
 
 嘿，先别走，开玩笑的，来看看：
