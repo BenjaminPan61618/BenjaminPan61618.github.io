@@ -6,4 +6,4 @@ Forbidden
 或者
 <a href="https://BenjaminPan61618.github.io/Experiments">我的 CPP 实验报告</a>
 
-来猜猜.../guess
+<a href="https://BenjaminPan61618.github.io/Navi">导航</a>
