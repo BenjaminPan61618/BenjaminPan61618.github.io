@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鹿彼_Ruby </title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ddd;
+    overflow: hidden;
+  }
+  .desktop {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    background-image:url("./res/A59A2546B288AD1EAD6A1BD655B09718.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .icon {
+
+    width: 80px;
+    height: 102px;
+    background-color: #fdd2fc;
+    margin: 20px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .icon img {
+    width: 48px;
+    height: 48px;
+    margin: 12px;
+    user-select: none;
+  }
+  .icon:hover {
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
+    transition: box-shadow 0.2s ease-in-out;
+  }
+  .icon span{
+    margin-left:7px;
+    user-select: none;
+    width:100px;
+  }
+  .watermark h2{
+ 
+    font-size: 89px;
+  }
+  .draggable{
+    user-select: none;
+  }
+  .watermark{
+    width:90%;
+    user-select: none;
+    height:30%;
+    display:inline-flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    color: rgba(228, 123, 53, 0.2);
+  }
+  .taskbar{
+width:100%;
+height:55px;
+position: absolute;
+bottom:0;
+background-color: rgba(0, 0, 0, 0.2);
+display: flex;
+vertical-align:middle;
+  }
+ #currentTime{
+  position: absolute;
+  right:5px;
+  top:18px;
+  font-weight: 400;
+  user-select: none;
+  color:azure;
+ }
+ /*新增*/
+ .dialog {
+    width: 300px;
+    position: absolute;
+    border: 2px solid #000;
+    background-color: #C0C0C0; /* 灰色背景 */
+    font-family: 'MS Sans Serif', Geneva, sans-serif; /* 使用MS Sans Serif字体 */
+    color: #000; /* 黑色文本 */
+    text-align: left; /* 左对齐文本 */
+}
+
+.draggable {
+    border: 2px solid #000;
+    padding: 10px;
+    margin-left: 20px;
+    margin-right:20px;
+    background-color: #C0C0C0; /* 灰色背景 */
+    font-family: 'MS Sans Serif', Geneva, sans-serif; /* 使用MS Sans Serif字体 */
+    color: #000; /* 黑色文本 */
+}
+
+#draggable:not(.draggable){
+    cursor: move;
+}
+.title-bar {
+    display: flex;
+    align-items: center;
+    background-color: #000080; /* 深蓝色背景 */
+    color: #fff; /* 白色文本 */
+    padding: 2px 6px;
+    font-family: 'MS Sans Serif', Geneva, sans-serif; /* 使用MS Sans Serif字体 */
+    font-size: 12px; /* 字体大小 */
+    user-select: none;
+}
+
+.title-bar button {
+    margin-left: auto;
+    background-color: #C0C0C0; /* 灰色背景 */
+    border: 1px solid #000; /* 黑色边框 */
+    color: #000; /* 黑色文本 */
+    padding: 2px;
+    font-size: 10px; /* 字体大小 */
+}
+.start{
+  height:48px;
+  width:48px;
+  position: absolute;
+  left:0;
+}
+
+
+.start-menu-hidden {
+  display: none;
+}
+
+.start-menu-visible {
+  display: block;
+  position: fixed;
+  bottom: 55px;
+  width: 200px;
+  background-color: #C0C0C0;
+  border: 2px solid #000;
+}
+#start-menu ul li{
+list-style: none;
+user-select: none;
+margin-bottom: 25px;
+}
+.desktop a{
+  color:#000;
+  text-decoration: none;
+}
+#mydiv {
+    position: absolute;
+    z-index: 9;
+    background-color: #f1f1f1;
+    border: 1px solid #d3d3d3;
+    text-align: center;
+}
+
+#mydivheader {
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+    background-color: #fdd2fc;
+    color: #fff;
+}
+#myimage {
+    max-width: 30%;
+}
+
+   /*新增*/
+</style>
+</head>
+<body>
+<div class="desktop">
+  <div id="mydiv">
+  <div id="mydivheader" draggable="false">鹿国管不允许你关闭此窗口</div>
+  <img src="res/9BABC88868122AB773570842CDAE939B.png" alt="Your Image" id="myimage">
+  <img src="res/BC2B67E19CE17E114E1DA88A7EA9EDE0.png" alt="Your Image" id="myimage">
+</div>
+
+  <div class="icon">
+    <img src="res/default-user-home.svg" alt="Icon"><span>主文件夹</span>
+  </div></a>
+  <a href="#">  <div class="icon">
+    <img src="res/default-user-desktop.svg" alt="Icon"><span>桌面文件</span>
+  </div></a>
+  <a href="#"> <div class="icon">
+    <img src="res/default-folder-download.svg" alt="Icon"><span>我的下载</span>
+  </div></a>
+  <div class="icon">
+    <img src="res/default-folder-recent.svg" alt="Icon"><span>最近使用</span>
+  </div>
+  <div class="icon">
+    <img src="res/default-network.svg" alt="Icon"><span>网上邻居</span>
+  </div>
+  <div class="icon">
+    <img src="res/default-folder.svg" alt="Icon"><span>新文件夹</span>
+  </div>
+  <div class="watermark">
+    <h2>鹿彼_Ruby</h2>
+    <h3>You cannot deny her!</h3>
+  </div>
+
+  <div class="dialog" id="draggable">
+    <div class="title-bar"><span>Hello, World</span><button type="button">X</button></div>
+    <p class="draggable">Drag Me!</p>
+    <p  class="draggable" >This is a draggable dialog.</p>
+  </div>
+  <div id="start-menu" class="start-menu-hidden">
+    <ul>
+      <li>鹿彼_Ruby</li>
+      <li>关注 鹿彼_Ruby 喵~</li>
+      <li>关注 鹿彼_Ruby 谢谢喵~</li>
+      <!-- 更多项目 -->
+    </ul>
+  </div>
+  <div class="taskbar">
+    <div class="start" id="start-button"><img alt="" src="res/view-grid-symbolic.svg"></div>
+    <div id="currentTime"></div>
+  </div>
+  <script>
+    const draggable = document.getElementById('draggable');
+    let active = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+   
+    draggable.addEventListener('mousedown', dragStart, false);
+    document.addEventListener('mouseup', dragEnd, false);
+    document.addEventListener('mousemove', drag, false);
+   
+    function dragStart(e) {
+      initialX = e.clientX - xOffset;
+      initialY = e.clientY - yOffset;
+   
+      if (e.target === draggable) {
+        active = true;
+      }
+    }
+   
+    function dragEnd(e) {
+      initialX = currentX;
+      initialY = currentY;
+   
+      active = false;
+    }
+   
+    function drag(e) {
+      if (active) {
+        e.preventDefault();
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+   
+        xOffset = currentX;
+        yOffset = currentY;
+   
+        setTranslate(currentX, currentY, draggable);
+      }
+    }
+   
+    function setTranslate(xPos, yPos, el) {
+      el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    }
+    function displayCurrentTime() {
+        var currentTime = new Date();
+        var hours = currentTime.getHours();
+        var minutes = currentTime.getMinutes();
+        var seconds = currentTime.getSeconds();
+  
+        // 添加0以确保两位数显示
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+  
+        var timeString = hours + ":" + minutes + ":" + seconds;
+  
+        document.getElementById("currentTime").innerHTML = timeString;
+    }
+  
+    // 每秒钟更新一次时间
+    setInterval(displayCurrentTime, 1000);
+
+
+    //新
+
+    document.getElementById('start-button').addEventListener('click', function() {
+  var startMenu = document.getElementById('start-menu');
+  if (startMenu.className === 'start-menu-hidden') {
+    startMenu.className = 'start-menu-visible';
+  } else {
+    startMenu.className = 'start-menu-hidden';
+  }
+});
+//新
+// JavaScript
+dragElement(document.getElementById("mydiv"));
+
+function dragElement(elmnt) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    if (document.getElementById(elmnt.id + "header")) {
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+        elmnt.onmousedown = dragMouseDown;
+    }
+
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+
+  </script>
+
+
+  <!-- Add more icons as needed -->
+</div>
+
+</body>
+</html>
