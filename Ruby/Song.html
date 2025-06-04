@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鹿彼_Ruby 的在线歌单</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* 日间模式变量 */
+            --primary: #ff6b9d;
+            --primary-light: #ff9bc0;
+            --primary-dark: #e05588;
+            --bg: #ffffff;
+            --card-bg: #fff5f9;
+            --text: #333333;
+            --text-secondary: #666666;
+            --border: #ffe4ed;
+            --shadow: rgba(255, 107, 157, 0.15);
+            --bg-gradient: linear-gradient(135deg, #fff5f9, #ffeef5);
+        }
+
+        [data-theme="dark"] {
+            /* 夜间模式变量 */
+            --primary: #ff6b9d;
+            --primary-light: #ff85ae;
+            --primary-dark: #d44a7a;
+            --bg: #1a1a2e;
+            --card-bg: #232340;
+            --text: #f0f0f0;
+            --text-secondary: #bbbbbb;
+            --border: #382a35;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --bg-gradient: linear-gradient(135deg, #1a1a2e, #232340);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.4rem;
+            z-index: 100;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(15deg);
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            max-width: 900px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, var(--primary), #ff9bc0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+            font-weight: 800;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), #ff9bc0);
+            border-radius: 3px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin: 25px auto 30px;
+            max-width: 700px;
+            color: var(--text-secondary);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: rgba(255, 107, 157, 0.15);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 16px 65px 16px 25px;
+            border-radius: 50px;
+            border: 2px solid var(--primary);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 1.1rem;
+            box-shadow: 0 5px 20px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            box-shadow: 0 8px 25px var(--shadow);
+            border-color: var(--primary-dark);
+        }
+
+        .search-container input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .search-container i {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1400px;
+            padding: 10px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px var(--shadow);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px var(--shadow);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), #ff9bc0);
+        }
+
+        .card .song-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--primary);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .song-number {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .card .copy-hint {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .card:hover .copy-hint {
+            transform: translateY(0);
+        }
+
+        .cover {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px var(--shadow);
+            position: relative;
+            background: linear-gradient(45deg, var(--primary-light), #ffc2d8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover i {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .song-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .song-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 5px 25px var(--shadow);
+            border: 2px solid var(--primary);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 12px;
+            margin: 35px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .page-btn {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 2px solid var(--primary);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover, .page-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0 25px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 20px;
+            width: 100%;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .card {
+                padding: 22px;
+            }
+            
+            .song-title {
+                font-size: 1.4rem;
+            }
+            
+            .controls {
+                gap: 12px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 20px 10px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .container {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            
+            .search-container {
+                margin-bottom: 25px;
+            }
+            
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <header>
+        <h1>粉色点歌系统</h1>
+        <p class="subtitle">点击歌曲卡片复制点歌指令（格式：点歌 歌名）<br>共收录100首热门歌曲，支持搜索和分页浏览</p>
+        
+        <div class="controls">
+            <button class="btn" id="randomBtn"><i class="fas fa-random"></i> <span>随机点歌</span></button>
+            <button class="btn" id="recentBtn"><i class="fas fa-history"></i> <span>最近点歌</span></button>
+            <button class="btn" id="popularBtn"><i class="fas fa-fire"></i> <span>热门歌曲</span></button>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="输入歌名或歌手搜索...">
+            <i class="fas fa-search"></i>
+        </div>
+    </header>
+    
+    <div class="container" id="songsContainer">
+        <!-- 歌曲卡片将通过JavaScript动态生成 -->
+    </div>
+    
+    <div class="pagination" id="pagination">
+        <!-- 分页按钮将通过JavaScript动态生成 -->
+    </div>
+    
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>点歌指令已复制到剪贴板！</span>
+    </div>
+    
+    <footer>
+        <p>© 2025 清茗盏香 | By DeepSeek | 点击卡片复制点歌指令</p>
+    </footer>
+    
+    <script>
+        // 处理歌曲标题（去掉序号和特殊标记）
+        function processTitle(title) {
+            // 去掉序号（如"1. "）
+            let processed = title.replace(/^\d+\.\s*/, '');
+            
+            // 去掉括号内的特殊标记（如"(+4)"、"（快嘴）"）
+            processed = processed.replace(/\s*\([^)]*\)/g, '')
+                                 .replace(/\s*（[^）]*）/g, '');
+            
+            return processed;
+        }
+        
+        // 歌曲数据（100首）
+        const rawSongs = [
+            "1. 凑热闹",
+            "2. 想你时风起",
+            "3. 花海 (+4)",
+            "4. 太聪明",
+            "5. 红昭愿",
+            "6. 飘向北方",
+            "7. 咕叽咕叽",
+            "8. 背对背拥抱",
+            "9. 勾指起誓",
+            "10. 下雨天",
+            "11. 爱的魔法",
+            "12. 睫毛弯弯",
+            "13. 牵丝戏+2",
+            "14. 我怀念的",
+            "15. 熬夜上瘾",
+            "16. 走马",
+            "17. 小半",
+            "18. 奇妙能力歌",
+            "19. 虚拟",
+            "20. 牛仔很忙（快嘴）",
+            "21. 如果有来生",
+            "22. 果汁分你一半",
+            "23. 可惜没如果",
+            "24. Always Online",
+            "25. 雨爱",
+            "26. 爱啦啦",
+            "27. 天长地久",
+            "28. 欧若拉",
+            "29. 星空剪影",
+            "30. 麦浪",
+            "31. 心愿便利贴",
+            "32. 爱的双重魔力",
+            "33. 小手拉大手",
+            "34. 那么骄傲",
+            "35. 爱丫爱丫",
+            "36. 再见（邓紫棋）",
+            "37. 左手右手",
+            "38. 心墙",
+            "39. 花海",
+            "40. 怎样说清此刻的心情",
+            "41. 人间不值得",
+            "42. 忽然之间",
+            "43. 彩虹的微笑",
+            "44. baby boy",
+            "45. 一个人想着一个人",
+            "46. Da da da",
+            "47. 小镇姑娘",
+            "48. 静悄悄",
+            "49. 不眠之夜",
+            "50. 麒麟",
+            "51. 等你下课",
+            "52. 有何不可",
+            "53. 夜车",
+            "54. 这就是爱吗",
+            "55. My Cookie Can",
+            "56. 年轮",
+            "57. 棠梨煎雪",
+            "58. 倒数",
+            "59. 淋雨一直走",
+            "60. 隐形的翅膀",
+            "61. 有形的翅膀",
+            "62. 爱要坦荡荡",
+            "63. 盛夏的果实",
+            "64. 夏天的风",
+            "65. 偏爱",
+            "66. 恋爱循环",
+            "67. 我的未来式",
+            "68. （绿光）",
+            "69. 第一次爱的人",
+            "70. 梦的光点",
+            "71. 我的梦",
+            "72. 摇篮谣",
+            "73. 摇篮曲",
+            "74. 只对你有感觉",
+            "75. 一笑倾城",
+            "76. 唯一 告五人",
+            "77. 命运",
+            "78. 慢慢喜欢你",
+            "79. 我的果汁分你一半",
+            "80. 红豆",
+            "81. 大眠",
+            "82. 妥协",
+            "83. 情歌",
+            "84. 如果爱忘了",
+            "85. 修炼爱情",
+            "86. 如愿",
+            "87. 珠玉",
+            "88. 漂洋过海来看你",
+            "89. 舒伯特玫瑰",
+            "90. 快乐的扑满",
+            "91. 我还有点小糊涂",
+            "92. 快乐小孩",
+            "93. 问题小孩",
+            "94. 巴啦啦小魔仙",
+            "95. 大家一起喜羊羊",
+            "96. 快乐星猫",
+            "97. 小狗乖乖",
+            "98. 疯狂果宝",
+            "99. 阳光男孩阳光女孩",
+            "100. 小跳蛙"
+        ];
+        
+        // 处理后的歌曲数据
+        const songs = rawSongs.map((rawSong, index) => {
+            return {
+                id: index + 1,
+                rawTitle: rawSong,
+                title: processTitle(rawSong),
+                duration: `${Math.floor(Math.random() * 4) + 2}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+                year: 2000 + Math.floor(Math.random() * 24),
+                genre: ["流行", "摇滚", "民谣", "R&B", "电子", "嘻哈"][Math.floor(Math.random() * 6)]
+            };
+        });
+        
+        // 分页相关变量
+        const songsPerPage = 12;
+        let currentPage = 1;
+        let filteredSongs = [...songs];
+        
+        // 主题状态
+        let isDarkMode = false;
+        
+        // 渲染歌曲卡片
+        function renderSongs(songList, page = 1) {
+            const container = document.getElementById('songsContainer');
+            container.innerHTML = '';
+            
+            const startIndex = (page - 1) * songsPerPage;
+            const endIndex = Math.min(startIndex + songsPerPage, songList.length);
+            const pageSongs = songList.slice(startIndex, endIndex);
+            
+            pageSongs.forEach(song => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="song-number">${song.id}</div>
+                    <div class="cover">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <h3 class="song-title">${song.title}</h3>
+                    <div class="song-info">
+                        <span>${song.duration}</span>
+                        <span>${song.year}</span>
+                        <span>${song.genre}</span>
+                    </div>
+                    <div class="copy-hint">点击复制点歌指令</div>
+                `;
+                
+                // 添加点击复制功能
+                card.addEventListener('click', () => {
+                    copyToClipboard(`点歌 ${song.title}`);
+                });
+                
+                container.appendChild(card);
+            });
+            
+            // 渲染分页控件
+            renderPagination(songList.length);
+        }
+        
+        // 渲染分页控件
+        function renderPagination(totalSongs) {
+            const totalPages = Math.ceil(totalSongs / songsPerPage);
+            const paginationEl = document.getElementById('pagination');
+            paginationEl.innerHTML = '';
+            
+            // 最多显示7个页码按钮
+            let startPage = Math.max(1, currentPage - 3);
+            let endPage = Math.min(totalPages, startPage + 6);
+            
+            if (endPage - startPage < 6) {
+                startPage = Math.max(1, endPage - 6);
+            }
+            
+            // 上一页按钮
+            if (currentPage > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'page-btn';
+                prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                prevBtn.addEventListener('click', () => {
+                    currentPage--;
+                    renderSongs(filteredSongs, currentPage);
+                });
+                paginationEl.appendChild(prevBtn);
+            }
+            
+            // 页码按钮
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderSongs(filteredSongs, currentPage);
+                });
+                paginationEl.appendChild(pageBtn);
+            }
+            
+            // 下一页按钮
+            if (currentPage < totalPages) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'page-btn';
+                nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                nextBtn.addEventListener('click', () => {
+                    currentPage++;
+                    renderSongs(filteredSongs, currentPage);
+                });
+                paginationEl.appendChild(nextBtn);
+            }
+        }
+        
+        // 复制到剪贴板功能
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // 显示提示
+            showToast();
+        }
+        
+        // 显示复制成功提示
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // 搜索功能
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                filteredSongs = songs.filter(song => 
+                    song.title.toLowerCase().includes(searchTerm) || 
+                    song.rawTitle.toLowerCase().includes(searchTerm)
+                );
+                
+                currentPage = 1;
+                renderSongs(filteredSongs, currentPage);
+            });
+        }
+        
+        // 随机点歌功能
+        function setupRandomSong() {
+            document.getElementById('randomBtn').addEventListener('click', () => {
+                const randomIndex = Math.floor(Math.random() * songs.length);
+                const randomSong = songs[randomIndex];
+                copyToClipboard(`点歌 ${randomSong.title}`);
+            });
+        }
+        
+        // 主题切换功能
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // 检查系统偏好
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                isDarkMode = true;
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                isDarkMode = !isDarkMode;
+                
+                if (isDarkMode) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeIcon.className = 'fas fa-sun';
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                    themeIcon.className = 'fas fa-moon';
+                }
+            });
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSongs(songs, currentPage);
+            setupSearch();
+            setupRandomSong();
+            setupThemeToggle();
+        });
+    </script>
+</body>
+</html>
