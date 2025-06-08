@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鹿彼_Ruby 的在线歌单 | 分类点歌系统</title>
+    <title>鹿彼_Ruby 的在线歌单 | 元气甜美歌杂</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -225,7 +225,7 @@
         .tabs {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            gap: 8px;
             margin-bottom: 25px;
             max-width: 1000px;
             width: 100%;
@@ -452,6 +452,36 @@
             font-size: 1.2rem;
         }
 
+        /* 筛选按钮优化 */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            max-width: 1000px;
+        }
+
+        .filter-btn {
+            background: var(--tag-bg);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
         /* 移动设备优化 */
         @media (max-width: 1024px) {
             .container {
@@ -466,6 +496,11 @@
                 padding: 8px 15px;
                 font-size: 0.9rem;
                 min-width: 100px;
+            }
+
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
             }
         }
         
@@ -540,17 +575,9 @@
                 display: none;
             }
             
+            /* 在手机上隐藏统计卡片 */
             .stats-bar {
-                gap: 12px;
-            }
-            
-            .stat-card {
-                min-width: 120px;
-                padding: 10px 15px;
-            }
-            
-            .stat-value {
-                font-size: 1.5rem;
+                display: none;
             }
             
             .tabs {
@@ -558,11 +585,33 @@
                 overflow-x: auto;
                 padding-bottom: 10px;
                 justify-content: flex-start;
+                scrollbar-width: none;
+            }
+            
+            .tabs::-webkit-scrollbar {
+                display: none;
             }
             
             .tab {
                 min-width: 110px;
                 flex: none;
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .filters {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                scrollbar-width: none;
+            }
+            
+            .filters::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .filter-btn {
+                flex-shrink: 0;
             }
         }
         
@@ -595,16 +644,6 @@
                 width: 60px;
                 height: 60px;
             }
-            
-            .stats-bar {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .stat-card {
-                width: 100%;
-                max-width: 250px;
-            }
         }
     </style>
 </head>
@@ -615,7 +654,7 @@
 
     <header>
         <h1>在线点歌</h1>
-        <p class="subtitle">点击歌曲卡片复制点歌指令<br>共收录103首热门歌曲，支持搜索和分类筛选</p>
+        <p class="subtitle">点击歌曲卡片复制点歌指令<br>共收录103首热门歌曲，支持搜索和分类筛选<br>本页列出的歌手是原唱，并非鹿鹿选择演唱的版本哦~</p>
         
         <div class="stats-bar">
             <div class="stat-card">
@@ -677,7 +716,7 @@
         const songs = [
             { id: 1, title: "凑热闹", artist: "By2", genres: ["流行"], year: 2010 },
             { id: 2, title: "想你时风起", artist: "单依纯", genres: ["流行"], year: 2023 },
-            { id: 3, title: "花海 (+4)", artist: "周杰伦", genres: ["流行", "摇滚"], year: 2008 },
+            { id: 3, title: "花海(+4)", artist: "周杰伦", genres: ["流行", "摇滚"], year: 2008 },
             { id: 4, title: "太聪明", artist: "陈绮贞", genres: ["流行"], year: 2002 },
             { id: 5, title: "红昭愿", artist: "音阙诗听", genres: ["古风"], year: 2017 },
             { id: 6, title: "飘向北方", artist: "那吾克热/尤长靖", genres: ["说唱"], year: 2018 },
@@ -818,6 +857,7 @@
         let isLoading = false;
         let activeCategory = "all";
         let activeFilter = "all";
+        let lastScrollPosition = 0;
         
         // 主题状态
         let isDarkMode = false;
@@ -985,11 +1025,17 @@
                 endMessage.textContent = '已经到底啦！共加载 ' + songList.length + ' 首歌曲';
                 container.appendChild(endMessage);
             }
+            
+            // 恢复滚动位置
+            window.scrollTo(0, lastScrollPosition);
         }
         
         // 加载更多歌曲
         function loadMoreSongs() {
             if (isLoading) return;
+            
+            // 保存当前滚动位置
+            lastScrollPosition = window.scrollY;
             
             // 模拟网络延迟
             isLoading = true;
@@ -1020,6 +1066,9 @@
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
+                    // 保存滚动位置
+                    lastScrollPosition = window.scrollY;
+                    
                     // 更新活动标签
                     tabs.forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
@@ -1066,6 +1115,9 @@
             const searchInput = document.getElementById('searchInput');
             
             searchInput.addEventListener('input', () => {
+                // 保存滚动位置
+                lastScrollPosition = window.scrollY;
+                
                 const searchTerm = searchInput.value.toLowerCase();
                 filteredSongs = songs.filter(song => 
                     song.title.toLowerCase().includes(searchTerm) ||
