@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鹿彼_Ruby 简洁歌单</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* 日间模式变量 */
+            --primary: #ff6b9d;
+            --primary-light: #ff9bc0;
+            --primary-dark: #e05588;
+            --bg: #ffffff;
+            --card-bg: #fff5f9;
+            --text: #333333;
+            --text-secondary: #666666;
+            --border: #ffe4ed;
+            --shadow: rgba(255, 107, 157, 0.15);
+            --bg-gradient: linear-gradient(135deg, #fff5f9, #ffeef5);
+            --row-hover: rgba(255, 107, 157, 0.05);
+        }
+
+        [data-theme="dark"] {
+            /* 夜间模式变量 */
+            --primary: #ff6b9d;
+            --primary-light: #ff85ae;
+            --primary-dark: #d44a7a;
+            --bg: #1a1a2e;
+            --card-bg: #232340;
+            --text: #f0f0f0;
+            --text-secondary: #bbbbbb;
+            --border: #382a35;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --bg-gradient: linear-gradient(135deg, #1a1a2e, #232340);
+            --row-hover: rgba(255, 107, 157, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.4rem;
+            z-index: 100;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(15deg);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 80px auto 40px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            padding: 0 20px 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), #ff9bc0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        /* 歌曲表格 */
+        .songs-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .songs-table th {
+            background: var(--primary);
+            color: white;
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .songs-table tr {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .songs-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .songs-table tr:hover {
+            background: var(--row-hover);
+            cursor: pointer;
+        }
+
+        .songs-table td {
+            padding: 14px 20px;
+            font-size: 1rem;
+        }
+
+        .song-title {
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .song-artist {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .copy-indicator {
+            color: var(--primary);
+            font-size: 0.9rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .songs-table tr.copied .copy-indicator {
+            opacity: 1;
+        }
+
+        .songs-table tr.copied {
+            background: rgba(255, 107, 157, 0.1);
+        }
+
+        /* 提示信息 */
+        .hint {
+            text-align: center;
+            padding: 15px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 5px 25px var(--shadow);
+            border: 2px solid var(--primary);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0 15px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        /* 移动设备优化 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 70px auto 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .songs-table th {
+                padding: 14px 15px;
+                font-size: 1rem;
+            }
+            
+            .songs-table td {
+                padding: 12px 15px;
+                font-size: 0.95rem;
+            }
+            
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                margin: 60px auto 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .songs-table th {
+                padding: 12px 10px;
+                font-size: 0.95rem;
+            }
+            
+            .songs-table td {
+                padding: 10px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>简洁歌单</h1>
+            <p class="subtitle">点击歌曲行复制点歌指令 - 共收录103首歌曲</p>
+        </header>
+        
+        <table class="songs-table" id="songsTable">
+            <thead>
+                <tr>
+                    <th style="width: 60%;">歌曲名称</th>
+                    <th style="width: 40%;">歌手</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 歌曲行将通过JavaScript动态生成 -->
+            </tbody>
+        </table>
+        
+        <div class="hint">
+            <i class="fas fa-hand-point-up" style="color: var(--primary); margin-right: 8px;"></i>
+            点击任意行复制点歌指令
+        </div>
+    </div>
+    
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>点歌指令已复制到剪贴板！</span>
+    </div>
+    
+    <footer>
+        <p>© 2025 清茗盏香 | By DeepSeek</p>
+    </footer>
+    
+    <script>
+        // 歌曲数据
+        const songs = [
+            { title: "凑热闹", artist: "By2" },
+            { title: "想你时风起", artist: "单依纯" },
+            { title: "花海 (+4)", artist: "周杰伦" },
+            { title: "太聪明", artist: "陈绮贞" },
+            { title: "红昭愿", artist: "音阙诗听" },
+            { title: "飘向北方", artist: "那吾克热/尤长靖" },
+            { title: "咕叽咕叽", artist: "孙燕姿" },
+            { title: "背对背拥抱", artist: "林俊杰" },
+            { title: "勾指起誓", artist: "ilem/洛天依" },
+            { title: "下雨天", artist: "南拳妈妈" },
+            { title: "爱的魔法", artist: "金莎" },
+            { title: "睫毛弯弯", artist: "王心凌" },
+            { title: "牵丝戏+2", artist: "银临/Aki阿杰" },
+            { title: "我怀念的", artist: "孙燕姿" },
+            { title: "熬夜上瘾", artist: "可乐就是力量" },
+            { title: "走马", artist: "陈粒" },
+            { title: "小半", artist: "陈粒" },
+            { title: "奇妙能力歌", artist: "陈粒" },
+            { title: "虚拟", artist: "陈粒" },
+            { title: "牛仔很忙（快嘴）", artist: "周杰伦" },
+            { title: "如果有来生", artist: "谭维维" },
+            { title: "我的果汁分你一半", artist: "花儿乐队" },
+            { title: "可惜没如果", artist: "林俊杰" },
+            { title: "Always Online", artist: "林俊杰" },
+            { title: "雨爱", artist: "杨丞琳" },
+            { title: "爱啦啦", artist: "海楠" },
+            { title: "情歌", artist: "梁静茹" },
+            { title: "欧若拉", artist: "张韶涵" },
+            { title: "星空剪影", artist: "蓝心羽" },
+            { title: "麦浪", artist: "yihuik苡慧" },
+            { title: "心愿便利贴", artist: "元若蓝/大Q秉洛" },
+            { title: "爱的双重魔力", artist: "By2" },
+            { title: "小手拉大手", artist: "梁静茹" },
+            { title: "那么骄傲", artist: "金海心" },
+            { title: "爱丫爱丫", artist: "By2" },
+            { title: "再见", artist: "邓紫棋" },
+            { title: "左手右手", artist: "杨沛宜" },
+            { title: "心墙", artist: "郭静" },
+            { title: "花海", artist: "周杰伦" },
+            { title: "怎样说清此刻的心情", artist: "By2" },
+            { title: "人间不值得", artist: "黄诗扶" },
+            { title: "忽然之间", artist: "莫文蔚" },
+            { title: "彩虹的微笑", artist: "王心凌" },
+            { title: "Baby boy", artist: "王心凌" },
+            { title: "一个人想着一个人", artist: "曾沛慈" },
+            { title: "Da da da", artist: "王心凌" },
+            { title: "小镇姑娘", artist: "陶喆" },
+            { title: "静悄悄", artist: "陈泫孝" },
+            { title: "不眠之夜", artist: "张杰" },
+            { title: "麒麟", artist: "早安" },
+            { title: "等你下课", artist: "周杰伦" },
+            { title: "有何不可", artist: "许嵩" },
+            { title: "夜车", artist: "曾轶可" },
+            { title: "这就是爱吗", artist: "容祖儿" },
+            { title: "My Cookie Can", artist: "卫兰" },
+            { title: "年轮", artist: "张碧晨" },
+            { title: "棠梨煎雪", artist: "银临" },
+            { title: "倒数", artist: "G.E.M.邓紫棋" },
+            { title: "淋雨一直走", artist: "张韶涵" },
+            { title: "隐形的翅膀", artist: "张韶涵" },
+            { title: "有形的翅膀", artist: "张韶涵" },
+            { title: "爱要坦荡荡", artist: "萧潇" },
+            { title: "盛夏的果实", artist: "莫文蔚" },
+            { title: "夏天的风", artist: "温岚" },
+            { title: "偏爱", artist: "张芸京" },
+            { title: "恋爱循环", artist: "花泽香菜" },
+            { title: "我的未来式", artist: "郭采洁" },
+            { title: "绿光", artist: "孙燕姿" },
+            { title: "第一次爱的人", artist: "王心凌" },
+            { title: "梦的光点", artist: "王心凌" },
+            { title: "我的梦", artist: "张靓颖" },
+            { title: "摇篮谣", artist: "斯斯与帆" },
+            { title: "摇篮曲", artist: "香香" },
+            { title: "只对你有感觉", artist: "飞轮海" },
+            { title: "一笑倾城", artist: "汪苏泷" },
+            { title: "唯一", artist: "告五人" },
+            { title: "命运", artist: "家家" },
+            { title: "慢慢喜欢你", artist: "莫文蔚" },
+            { title: "红豆", artist: "王菲" },
+            { title: "大眠", artist: "王心凌" },
+            { title: "妥协", artist: "蔡依林" },
+            { title: "如果爱忘了", artist: "戚薇" },
+            { title: "修炼爱情", artist: "林俊杰" },
+            { title: "如愿", artist: "王菲" },
+            { title: "珠玉", artist: "单依纯" },
+            { title: "漂洋过海来看你", artist: "梁静茹" },
+            { title: "舒伯特玫瑰", artist: "蓝心羽/翁梓铭" },
+            { title: "快乐的扑满", artist: "邵丽棠" },
+            { title: "我还有点小糊涂", artist: "刘晨" },
+            { title: "快乐小孩", artist: "豆豆" },
+            { title: "问题小孩", artist: "周元恒" },
+            { title: "巴啦啦小魔仙", artist: "大小Ann" },
+            { title: "大家一起喜羊羊", artist: "周笔畅" },
+            { title: "快乐星猫", artist: "牛奶咖啡" },
+            { title: "小狗乖乖", artist: "未知歌手" },
+            { title: "疯狂果宝", artist: "陈洁丽" },
+            { title: "阳光男孩阳光女孩", artist: "TG4" },
+            { title: "小跳蛙", artist: "青蛙乐队" },
+            { title: "房间", artist: "刘瑞琦" },
+            { title: "岁月神偷", artist: "金玟岐" },
+            { title: "第一天", artist: "孙燕姿" },
+            { title: "时间煮雨", artist: "郁可唯" },
+            { title: "Mama", artist: "EXO" }
+        ];
+
+        // 渲染歌曲表格
+        function renderSongsTable() {
+            const tbody = document.querySelector('#songsTable tbody');
+            tbody.innerHTML = '';
+            
+            songs.forEach(song => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="song-title">${song.title}</td>
+                    <td class="song-artist">${song.artist}</td>
+                `;
+                
+                // 添加点击复制功能
+                row.addEventListener('click', () => {
+                    copyToClipboard(`点歌 ${song.title}`, row);
+                });
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // 复制到剪贴板功能
+        function copyToClipboard(text, row) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // 显示提示
+            showToast();
+            
+            // 添加复制反馈效果
+            row.classList.add('copied');
+            setTimeout(() => {
+                row.classList.remove('copied');
+            }, 1000);
+        }
+        
+        // 显示复制成功提示
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // 主题切换功能
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // 检查系统偏好
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.hasAttribute('data-theme');
+                
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    themeIcon.className = 'fas fa-moon';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeIcon.className = 'fas fa-sun';
+                }
+            });
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSongsTable();
+            setupThemeToggle();
+        });
+    </script>
+</body>
+</html>
