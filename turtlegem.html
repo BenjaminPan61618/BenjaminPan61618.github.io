@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宝石对对碰</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            background: linear-gradient(90deg, #ff9a00, #ff0058, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            animation: titleGlow 3s infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 154, 0, 0.5); }
+            100% { text-shadow: 0 0 20px rgba(0, 212, 255, 0.7); }
+        }
+        
+        .game-description {
+            font-size: 1.1rem;
+            color: #b0b0d0;
+            max-width: 900px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .right-panel {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .panel {
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .panel:hover {
+            transform: translateY(-5px);
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            color: #6ee7b7;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(110, 231, 183, 0.3);
+        }
+        
+        .panel-title i {
+            font-size: 1.8rem;
+        }
+        
+        .color-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        
+        .color-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .color-option:hover::before {
+            opacity: 1;
+            animation: shine 1.5s infinite;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .color-option.selected {
+            transform: scale(1.2) rotate(0deg);
+            box-shadow: 0 0 0 3px #fff, 0 0 0 6px #6ee7b7, 0 0 20px rgba(110, 231, 183, 0.7);
+            animation: pulseSelected 2s infinite;
+        }
+        
+        @keyframes pulseSelected {
+            0% { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #6ee7b7, 0 0 20px rgba(110, 231, 183, 0.7); }
+            50% { box-shadow: 0 0 0 3px #fff, 0 0 0 10px rgba(110, 231, 183, 0.5), 0 0 30px rgba(110, 231, 183, 0.9); }
+            100% { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #6ee7b7, 0 0 20px rgba(110, 231, 183, 0.7); }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 160px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+            z-index: -1;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        #playOnceBtn {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            color: white;
+        }
+        
+        #playOnceBtn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 176, 155, 0.5);
+        }
+        
+        #resetBtn {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        #resetBtn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 65, 108, 0.5);
+        }
+        
+        #playTenBtn {
+            background: linear-gradient(90deg, #8e2de2, #4a00e0);
+            color: white;
+        }
+        
+        #playTenBtn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(142, 45, 226, 0.5);
+        }
+        
+        .game-grid-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .grid-bg {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 25px;
+            z-index: 1;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .gem {
+            aspect-ratio: 1;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            box-shadow: 
+                inset 0 0 20px rgba(255, 255, 255, 0.2), 
+                0 8px 20px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.5s;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+        
+        .gem::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
+            z-index: -1;
+            border-radius: 15px;
+        }
+        
+        .gem::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: -1;
+        }
+        
+        .gem.matched::after {
+            opacity: 1;
+            animation: gemShine 1s ease-out;
+        }
+        
+        @keyframes gemShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .gem.lucky {
+            animation: luckyPulse 1.5s infinite, gemFloat 3s infinite ease-in-out;
+        }
+        
+        @keyframes luckyPulse {
+            0% { box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2), 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(110, 231, 183, 0.7); }
+            70% { box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2), 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 0 20px rgba(110, 231, 183, 0); }
+            100% { box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2), 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(110, 231, 183, 0); }
+        }
+        
+        @keyframes gemFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .gem.removing {
+            animation: gemRemove 0.8s forwards;
+        }
+        
+        @keyframes gemRemove {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        
+        .gem.appearing {
+            animation: gemAppear 0.8s forwards;
+        }
+        
+        @keyframes gemAppear {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .stat-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 25px 20px;
+            flex: 1;
+            min-width: 170px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(110, 231, 183, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .stat-box:hover::before {
+            opacity: 1;
+        }
+        
+        .stat-value {
+            font-size: 3.2rem;
+            font-weight: bold;
+            color: #6ee7b7;
+            line-height: 1;
+            text-shadow: 0 0 10px rgba(110, 231, 183, 0.5);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: #b0b0d0;
+            margin-top: 8px;
+        }
+        
+        .game-session-stats {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .session-title {
+            font-size: 1.2rem;
+            color: #6ee7b7;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .session-results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        
+        .session-result {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .session-result.highlight {
+            background: rgba(110, 231, 183, 0.2);
+            border: 1px solid #6ee7b7;
+        }
+        
+        .session-total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1.1rem;
+            color: #fbbf24;
+        }
+        
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .log-title {
+            font-size: 1.2rem;
+            color: #6ee7b7;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .log-entry {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #6ee7b7;
+            animation: fadeIn 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .log-entry::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transform: translateX(-100%);
+        }
+        
+        .log-entry.new::before {
+            animation: logHighlight 1s forwards;
+        }
+        
+        @keyframes logHighlight {
+            to { transform: translateX(100%); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .log-entry.match {
+            border-left-color: #fbbf24;
+        }
+        
+        .log-entry.bonus {
+            border-left-color: #8b5cf6;
+        }
+        
+        .log-entry.final {
+            border-left-color: #10b981;
+            font-weight: bold;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .rules {
+            margin-top: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .rules h2 {
+            color: #6ee7b7;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rules ul {
+            padding-left: 20px;
+            color: #b0b0d0;
+            line-height: 1.6;
+        }
+        
+        .rules li {
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+        
+        /* 反馈文本样式 */
+        .feedback-text {
+            position: absolute;
+            font-weight: bold;
+            font-size: 1.4rem;
+            pointer-events: none;
+            z-index: 100;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+            animation: floatUp 1.5s forwards;
+            white-space: nowrap;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80px) scale(0.8); opacity: 0; }
+        }
+        
+        .feedback-lucky {
+            color: #6ee7b7;
+        }
+        
+        .feedback-bonus {
+            color: #fbbf24;
+        }
+        
+        .feedback-fullhouse {
+            color: #8b5cf6;
+        }
+        
+        .feedback-pair {
+            color: #f87171;
+        }
+        
+        /* 步骤指示器 */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            font-weight: bold;
+            color: #b0b0d0;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step.active {
+            background: rgba(110, 231, 183, 0.2);
+            color: #6ee7b7;
+            box-shadow: 0 0 15px rgba(110, 231, 183, 0.3);
+        }
+        
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(110, 231, 183, 0.3), transparent);
+            transition: left 0.7s;
+        }
+        
+        .step.active::after {
+            left: 100%;
+        }
+        
+        /* 动画宝石 */
+        .animated-gem {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 50;
+            pointer-events: none;
+            animation: flyGem 1s forwards;
+        }
+        
+        @keyframes flyGem {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: var(--target-pos) scale(0.5); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+            
+            button {
+                min-width: 100%;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gem"></i> 宝石对对碰</h1>
+            <p class="game-description">选择幸运色宝石，进行单次或多次游戏，每次游戏碰数独立计算！</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="left-panel">
+                <div class="panel">
+                    <div class="panel-title">
+                        <i class="fas fa-palette"></i> 选择幸运色
+                    </div>
+                    
+                    <div class="color-picker" id="colorPicker">
+                        <!-- 颜色选项将通过JavaScript动态生成 -->
+                    </div>
+                    
+                    <div class="panel-title">
+                        <i class="fas fa-gamepad"></i> 游戏控制
+                    </div>
+                    
+                    <div class="controls">
+                        <button id="playOnceBtn">
+                            <i class="fas fa-play"></i> 碰1次
+                        </button>
+                        <button id="playTenBtn">
+                            <i class="fas fa-bolt"></i> 碰10次
+                        </button>
+                        <button id="resetBtn">
+                            <i class="fas fa-redo"></i> 重置游戏
+                        </button>
+                    </div>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="touchCount">0</div>
+                            <div class="stat-label">当前碰数</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="reserveGems">0</div>
+                            <div class="stat-label">备用宝石</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="roundCount">0</div>
+                            <div class="stat-label">游戏轮次</div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-session-stats">
+                        <div class="session-title">
+                            <i class="fas fa-chart-bar"></i> 游戏会话统计
+                        </div>
+                        <div id="sessionResults" class="session-results">
+                            <div class="session-result">暂无游戏记录</div>
+                        </div>
+                        <div id="sessionTotal" class="session-total"></div>
+                    </div>
+                </div>
+                
+                <div class="log-container">
+                    <div class="log-title">
+                        <i class="fas fa-scroll"></i> 游戏演算日志
+                    </div>
+                    <div id="gameLog">
+                        <div class="log-entry">
+                            等待游戏开始...请选择幸运色并点击"碰1次"或"碰10次"
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel">
+                    <div class="panel-title">
+                        <i class="fas fa-border-all"></i> 宝石九宫格演算区
+                    </div>
+                    
+                    <div class="step-indicator">
+                        <div class="step" id="step1">幸运色判断</div>
+                        <div class="step" id="step2">全家福判断</div>
+                        <div class="step" id="step3">三连判断</div>
+                        <div class="step" id="step4">对子判断</div>
+                        <div class="step" id="step5">宝石补充</div>
+                    </div>
+                    
+                    <div class="game-grid-container">
+                        <div class="grid-bg"></div>
+                        <div class="game-grid" id="gameGrid">
+                            <!-- 宝石格子将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="panel-title">
+                        <i class="fas fa-info-circle"></i> 当前演算状态
+                    </div>
+                    
+                    <div id="gameStatus">
+                        <p>游戏准备中...请选择幸运色</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="rules">
+            <h2><i class="fas fa-book"></i> 游戏演算规则（改进版）</h2>
+            <ul>
+                <li><strong>第1步 - 幸运色判断：</strong>九宫格中每存在1个与幸运色相同的宝石，碰数+1，备用宝石+1（每枚宝石只参与1次幸运色判断）</li>
+                <li><strong>第2步 - 全家福判断：</strong>若九宫格中存在9个颜色各不相同的宝石，碰数+10，备用宝石+10，消除全家福宝石</li>
+                <li><strong>第3步 - 三连判断：</strong>每存在连续3个颜色相同的宝石（横、竖、斜），碰数+5，备用宝石+5，消除三连宝石</li>
+                <li><strong>第4步 - 对子判断：</strong>剩余宝石中每存在2个颜色相同的宝石（无论是否相邻），碰数+1，备用宝石+1，消除对子宝石</li>
+                <li><strong>第5步 - 补充宝石：</strong>消耗备用宝石补充随机宝石（从左至右、从上至下的顺序）</li>
+                <li><strong>重复第1~5步，</strong>直至备用宝石为0，根据累计碰数发放奖励</li>
+                <li><strong>新增功能：</strong>"碰1次"按钮进行单次游戏，"碰10次"按钮连续进行10次独立游戏，每次游戏碰数独立计算</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 游戏配置
+        const COLORS = [
+            {name: "红", value: "#ff4757", emoji: "🔴"},
+            {name: "橙", value: "#ffa502", emoji: "🟠"},
+            {name: "黄", value: "#ffd32a", emoji: "🟡"},
+            {name: "绿", value: "#2ed573", emoji: "🟢"},
+            {name: "青", value: "#1e90ff", emoji: "🔵"},
+            {name: "蓝", value: "#3742fa", emoji: "🔷"},
+            {name: "靛", value: "#7158e2", emoji: "💠"},
+            {name: "紫", value: "#9c88ff", emoji: "🟣"},
+            {name: "粉", value: "#ff9ff3", emoji: "🌸"},
+            {name: "黑", value: "#2f3542", emoji: "⚫"}
+        ];
+        
+        // 游戏状态
+        let gameState = {
+            luckyColor: null,
+            gems: [], // 3x3宝石数组
+            touchCount: 0,
+            reserveGems: 0,
+            roundCount: 0,
+            gameActive: false,
+            currentStep: 0, // 当前步骤
+            luckyChecked: [] // 记录已检查过幸运色的宝石位置
+        };
+        
+        // 游戏会话统计
+        let gameSessions = {
+            results: [], // 存储每次游戏的碰数
+            totalTouches: 0, // 总碰数
+            currentSession: 0 // 当前会话编号
+        };
+        
+        // DOM元素
+        let colorPicker, gameGrid, touchCountEl, reserveGemsEl, roundCountEl, gameLog, gameStatus;
+        let sessionResultsEl, sessionTotalEl;
+        let stepIndicators = [];
+        
+        // 初始化游戏
+        function initGame() {
+            // 获取DOM元素
+            colorPicker = document.getElementById('colorPicker');
+            gameGrid = document.getElementById('gameGrid');
+            touchCountEl = document.getElementById('touchCount');
+            reserveGemsEl = document.getElementById('reserveGems');
+            roundCountEl = document.getElementById('roundCount');
+            gameLog = document.getElementById('gameLog');
+            gameStatus = document.getElementById('gameStatus');
+            sessionResultsEl = document.getElementById('sessionResults');
+            sessionTotalEl = document.getElementById('sessionTotal');
+            
+            // 获取步骤指示器
+            for (let i = 1; i <= 5; i++) {
+                stepIndicators.push(document.getElementById(`step${i}`));
+            }
+            
+            // 创建颜色选择器
+            createColorPicker();
+            
+            // 创建宝石九宫格
+            createGameGrid();
+            
+            // 初始化游戏状态
+            resetGame();
+            
+            // 绑定事件
+            document.getElementById('playOnceBtn').addEventListener('click', () => playGame(1));
+            document.getElementById('playTenBtn').addEventListener('click', () => playGame(10));
+            document.getElementById('resetBtn').addEventListener('click', resetGame);
+            
+            // 初始日志
+            addLog("游戏已初始化，请选择幸运色开始游戏", "normal");
+        }
+        
+        // 创建颜色选择器
+        function createColorPicker() {
+            colorPicker.innerHTML = '';
+            
+            COLORS.forEach((color, index) => {
+                const colorOption = document.createElement('div');
+                colorOption.className = 'color-option';
+                colorOption.style.backgroundColor = color.value;
+                colorOption.dataset.colorIndex = index;
+                colorOption.innerHTML = `<span style="font-size: 2.2rem;">${color.emoji}</span>`;
+                
+                colorOption.addEventListener('click', () => {
+                    if (gameState.gameActive) return;
+                    
+                    // 移除其他选择
+                    document.querySelectorAll('.color-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // 选择当前颜色
+                    colorOption.classList.add('selected');
+                    gameState.luckyColor = index;
+                    
+                    addLog(`幸运色已选择：${color.name}色宝石`, "normal");
+                    updateStatus(`幸运色：${color.name}色宝石，点击"碰1次"或"碰10次"开始游戏`);
+                    
+                    // 播放选择动画
+                    playSelectionAnimation(colorOption);
+                });
+                
+                colorPicker.appendChild(colorOption);
+            });
+        }
+        
+        // 播放选择动画
+        function playSelectionAnimation(element) {
+            // 创建粒子效果
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    createSparkle(element);
+                }, i * 50);
+            }
+        }
+        
+        // 创建宝石九宫格
+        function createGameGrid() {
+            gameGrid.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const gemCell = document.createElement('div');
+                gemCell.className = 'gem';
+                gemCell.dataset.index = i;
+                gemCell.innerHTML = '❓';
+                gameGrid.appendChild(gemCell);
+            }
+        }
+        
+        // 重置游戏
+        function resetGame() {
+            gameState = {
+                luckyColor: null,
+                gems: [],
+                touchCount: 0,
+                reserveGems: 0,
+                roundCount: 0,
+                gameActive: false,
+                currentStep: 0,
+                luckyChecked: []
+            };
+            
+            // 重置颜色选择
+            document.querySelectorAll('.color-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // 重置宝石格子
+            document.querySelectorAll('.gem').forEach(gem => {
+                gem.innerHTML = '❓';
+                gem.style.backgroundColor = '#1a1a2e';
+                gem.classList.remove('matched', 'lucky', 'removing', 'appearing');
+            });
+            
+            // 重置步骤指示器
+            stepIndicators.forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // 重置显示
+            touchCountEl.textContent = '0';
+            reserveGemsEl.textContent = '0';
+            roundCountEl.textContent = '0';
+            
+            // 清空日志
+            gameLog.innerHTML = '';
+            addLog("游戏已重置，请选择幸运色开始游戏", "normal");
+            
+            updateStatus("游戏准备中...请选择幸运色");
+            
+            // 重置会话统计
+            gameSessions = {
+                results: [],
+                totalTouches: 0,
+                currentSession: 0
+            };
+            updateSessionDisplay();
+        }
+        
+        // 玩游戏（单次或多次）
+        async function playGame(times) {
+            if (gameState.luckyColor === null) {
+                addLog("请先选择幸运色！", "normal");
+                return;
+            }
+            
+            if (gameState.gameActive) {
+                addLog("游戏正在进行中，请稍候...", "normal");
+                return;
+            }
+            
+            // 禁用按钮避免重复点击
+            setButtonsDisabled(true);
+            
+            if (times === 1) {
+                // 单次游戏
+                gameSessions.currentSession++;
+                addLog(`=== 开始第 ${gameSessions.currentSession} 次游戏 ===`, "normal");
+                
+                // 初始化单次游戏
+                initSingleGame();
+                
+                // 执行游戏直到结束
+                await runGameUntilEnd();
+                
+                // 记录结果
+                recordGameResult(gameState.touchCount);
+                
+                addLog(`第 ${gameSessions.currentSession} 次游戏结束，碰数：${gameState.touchCount}`, "final");
+            } else {
+                // 多次游戏
+                addLog(`=== 开始连续 ${times} 次游戏 ===`, "normal");
+                
+                for (let i = 1; i <= times; i++) {
+                    gameSessions.currentSession++;
+                    addLog(`开始第 ${gameSessions.currentSession} 次游戏`, "normal");
+                    
+                    // 初始化单次游戏
+                    initSingleGame();
+                    
+                    // 执行游戏直到结束（快速模式，无动画延迟）
+                    await runGameUntilEnd(true);
+                    
+                    // 记录结果
+                    recordGameResult(gameState.touchCount);
+                    
+                    addLog(`第 ${gameSessions.currentSession} 次游戏结束，碰数：${gameState.touchCount}`, "final");
+                    
+                    // 如果不是最后一次，稍作延迟
+                    if (i < times) {
+                        await sleep(300);
+                    }
+                }
+                
+                addLog(`连续 ${times} 次游戏完成，总碰数：${gameSessions.totalTouches}，平均碰数：${(gameSessions.totalTouches / times).toFixed(1)}`, "final");
+            }
+            
+            // 启用按钮
+            setButtonsDisabled(false);
+        }
+        
+        // 初始化单次游戏
+        function initSingleGame() {
+            gameState.gems = [];
+            gameState.touchCount = 0;
+            gameState.reserveGems = 0;
+            gameState.roundCount = 0;
+            gameState.luckyChecked = [];
+            gameState.gameActive = true;
+            gameState.currentStep = 0;
+            
+            // 生成初始宝石
+            generateGems();
+            
+            // 更新显示
+            updateGridDisplay();
+            touchCountEl.textContent = gameState.touchCount;
+            reserveGemsEl.textContent = gameState.reserveGems;
+            roundCountEl.textContent = gameState.roundCount;
+        }
+        
+        // 执行游戏直到结束
+        async function runGameUntilEnd(fastMode = false) {
+            while (gameState.gameActive && gameState.reserveGems >= 0) {
+                await playRound(fastMode);
+                
+                // 检查游戏是否结束
+                if (gameState.reserveGems === 0) {
+                    gameState.gameActive = false;
+                    break;
+                }
+            }
+        }
+        
+        // 设置按钮禁用状态
+        function setButtonsDisabled(disabled) {
+            document.getElementById('playOnceBtn').disabled = disabled;
+            document.getElementById('playTenBtn').disabled = disabled;
+            document.getElementById('resetBtn').disabled = disabled;
+            
+            // 更新按钮样式
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                if (disabled) {
+                    btn.style.opacity = '0.6';
+                    btn.style.cursor = 'not-allowed';
+                } else {
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                }
+            });
+        }
+        
+        // 记录游戏结果
+        function recordGameResult(touchCount) {
+            gameSessions.results.push({
+                session: gameSessions.currentSession,
+                touches: touchCount
+            });
+            
+            gameSessions.totalTouches += touchCount;
+            
+            // 更新会话显示
+            updateSessionDisplay();
+        }
+        
+        // 更新会话显示
+        function updateSessionDisplay() {
+            if (gameSessions.results.length === 0) {
+                sessionResultsEl.innerHTML = '<div class="session-result">暂无游戏记录</div>';
+                sessionTotalEl.textContent = '';
+                return;
+            }
+            
+            // 显示最近10次结果
+            const recentResults = gameSessions.results.slice(-10);
+            sessionResultsEl.innerHTML = '';
+            
+            recentResults.forEach(result => {
+                const resultEl = document.createElement('div');
+                resultEl.className = 'session-result';
+                if (result.session === gameSessions.currentSession) {
+                    resultEl.classList.add('highlight');
+                }
+                resultEl.textContent = `游戏${result.session}: ${result.touches}碰`;
+                sessionResultsEl.appendChild(resultEl);
+            });
+            
+            // 更新总碰数
+            sessionTotalEl.textContent = `总碰数: ${gameSessions.totalTouches} | 平均: ${(gameSessions.totalTouches / gameSessions.results.length).toFixed(1)} | 最高: ${Math.max(...gameSessions.results.map(r => r.touches))}`;
+        }
+        
+        // 睡眠函数
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // 生成随机宝石
+        function generateGems() {
+            gameState.gems = [];
+            for (let i = 0; i < 9; i++) {
+                gameState.gems.push(Math.floor(Math.random() * COLORS.length));
+            }
+            updateGridDisplay();
+        }
+        
+        // 更新九宫格显示
+        function updateGridDisplay() {
+            document.querySelectorAll('.gem').forEach((gem, index) => {
+                const colorIndex = gameState.gems[index];
+                
+                if (colorIndex === undefined || colorIndex === null) {
+                    gem.innerHTML = '❓';
+                    gem.style.backgroundColor = '#1a1a2e';
+                    gem.classList.remove('matched', 'lucky', 'removing', 'appearing');
+                    return;
+                }
+                
+                const color = COLORS[colorIndex];
+                gem.innerHTML = color.emoji;
+                gem.style.backgroundColor = color.value;
+                
+                // 如果宝石是幸运色且未被检查过，添加闪烁效果
+                if (colorIndex === gameState.luckyColor && !gameState.luckyChecked.includes(index)) {
+                    gem.classList.add('lucky');
+                } else {
+                    gem.classList.remove('lucky');
+                }
+                
+                // 确保移除动画类
+                gem.classList.remove('removing', 'appearing');
+            });
+        }
+        
+        // 执行一轮游戏
+        async function playRound(fastMode = false) {
+            if (!gameState.gameActive || gameState.reserveGems < 0) return;
+            
+            gameState.roundCount++;
+            roundCountEl.textContent = gameState.roundCount;
+            
+            if (!fastMode) {
+                addLog(`--- 第 ${gameState.roundCount} 轮演算开始 ---`, "normal");
+            }
+            
+            // 更新步骤指示器
+            if (!fastMode) updateStepIndicator(0);
+            
+            // 第1步：判断幸运色
+            await checkLuckyColor(fastMode);
+            
+            // 更新步骤指示器
+            if (!fastMode) updateStepIndicator(1);
+            
+            // 第2步：判断全家福
+            await checkFullHouse(fastMode);
+            
+            // 更新步骤指示器
+            if (!fastMode) updateStepIndicator(2);
+            
+            // 第3步：判断三连
+            await checkThreeInARow(fastMode);
+            
+            // 更新步骤指示器
+            if (!fastMode) updateStepIndicator(3);
+            
+            // 第4步：判断对子（改进版：不相邻的对子也能消除）
+            await checkPairsImproved(fastMode);
+            
+            // 更新步骤指示器
+            if (!fastMode) updateStepIndicator(4);
+            
+            // 第5步：补充宝石
+            await refillGems(fastMode);
+            
+            // 重置步骤指示器
+            if (!fastMode) updateStepIndicator(0);
+            
+            // 更新显示
+            updateGridDisplay();
+            touchCountEl.textContent = gameState.touchCount;
+            reserveGemsEl.textContent = gameState.reserveGems;
+            
+            if (!fastMode) {
+                updateStatus(`第${gameState.roundCount}轮演算完成，备用宝石：${gameState.reserveGems}`);
+            }
+        }
+        
+        // 更新步骤指示器
+        function updateStepIndicator(step) {
+            stepIndicators.forEach((indicator, index) => {
+                if (index === step) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+            gameState.currentStep = step;
+        }
+        
+        // 第1步：判断幸运色
+        async function checkLuckyColor(fastMode = false) {
+            let luckyCount = 0;
+            const luckyMatches = [];
+            
+            for (let i = 0; i < 9; i++) {
+                if (gameState.gems[i] === gameState.luckyColor && 
+                    !gameState.luckyChecked.includes(i)) {
+                    luckyCount++;
+                    gameState.luckyChecked.push(i);
+                    luckyMatches.push(i);
+                }
+            }
+            
+            if (luckyCount > 0) {
+                // 更新分数
+                gameState.touchCount += luckyCount;
+                gameState.reserveGems += luckyCount;
+                
+                if (!fastMode) {
+                    addLog(`幸运色匹配：${luckyCount}个宝石，碰数+${luckyCount}，备用宝石+${luckyCount}`, "match");
+                    
+                    // 显示反馈文本
+                    for (const index of luckyMatches) {
+                        showFeedback(index, `幸运+1`, 'feedback-lucky');
+                        await sleep(300);
+                    }
+                    
+                    // 添加匹配动画
+                    for (const index of luckyMatches) {
+                        const gem = document.querySelector(`.gem[data-index="${index}"]`);
+                        gem.classList.add('matched');
+                        await sleep(200);
+                    }
+                    
+                    // 等待动画完成
+                    await sleep(500);
+                }
+            }
+            
+            return luckyCount > 0;
+        }
+        
+        // 第2步：判断全家福
+        async function checkFullHouse(fastMode = false) {
+            // 检查是否有9个不同的颜色
+            const colorSet = new Set();
+            let valid = true;
+            
+            for (let i = 0; i < 9; i++) {
+                if (gameState.gems[i] === undefined || gameState.gems[i] === null) {
+                    valid = false;
+                    break;
+                }
+                colorSet.add(gameState.gems[i]);
+            }
+            
+            if (valid && colorSet.size === 9) {
+                // 全家福！
+                gameState.touchCount += 10;
+                gameState.reserveGems += 10;
+                
+                if (!fastMode) {
+                    // 显示反馈文本
+                    showFeedback(4, `全家福+10`, 'feedback-fullhouse');
+                    
+                    addLog("全家福！9种颜色各不同，碰数+10，备用宝石+10", "bonus");
+                    
+                    // 播放全家福动画
+                    await playFullHouseAnimation();
+                }
+                
+                // 移除宝石
+                for (let i = 0; i < 9; i++) {
+                    gameState.gems[i] = null;
+                }
+                
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // 播放全家福动画
+        async function playFullHouseAnimation() {
+            // 所有宝石闪烁
+            for (let i = 0; i < 9; i++) {
+                const gem = document.querySelector(`.gem[data-index="${i}"]`);
+                gem.classList.add('matched');
+            }
+            
+            await sleep(300);
+            
+            // 创建向外扩散的动画
+            for (let i = 0; i < 9; i++) {
+                const gem = document.querySelector(`.gem[data-index="${i}"]`);
+                gem.classList.add('removing');
+            }
+            
+            await sleep(800);
+        }
+        
+        // 第3步：判断三连
+        async function checkThreeInARow(fastMode = false) {
+            const lines = [
+                // 横线
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                // 竖线
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                // 对角线
+                [0, 4, 8], [2, 4, 6]
+            ];
+            
+            let threeMatches = 0;
+            const matchedIndices = [];
+            
+            // 检查所有连线
+            for (const line of lines) {
+                const [a, b, c] = line;
+                
+                // 确保三个位置都有宝石且颜色相同
+                if (gameState.gems[a] !== undefined && gameState.gems[a] !== null &&
+                    gameState.gems[a] === gameState.gems[b] &&
+                    gameState.gems[a] === gameState.gems[c]) {
+                    
+                    threeMatches++;
+                    
+                    // 记录匹配的位置
+                    matchedIndices.push(a, b, c);
+                    
+                    if (!fastMode) {
+                        // 显示反馈文本
+                        showFeedback(line[1], `三连+5`, 'feedback-bonus');
+                    }
+                }
+            }
+            
+            // 移除重复的位置
+            const uniqueMatchedIndices = [...new Set(matchedIndices)];
+            
+            if (threeMatches > 0) {
+                const bonus = threeMatches * 5;
+                gameState.touchCount += bonus;
+                gameState.reserveGems += bonus;
+                
+                if (!fastMode) {
+                    addLog(`三连匹配：${threeMatches}组，碰数+${bonus}，备用宝石+${bonus}`, "match");
+                    
+                    // 播放消除动画
+                    for (const index of uniqueMatchedIndices) {
+                        const gem = document.querySelector(`.gem[data-index="${index}"]`);
+                        gem.classList.add('removing');
+                        await sleep(200);
+                    }
+                    
+                    await sleep(500);
+                }
+                
+                // 移除匹配的宝石
+                uniqueMatchedIndices.forEach(index => {
+                    gameState.gems[index] = null;
+                });
+                
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // 第4步：判断对子（改进版：不相邻的对子也能消除）
+        async function checkPairsImproved(fastMode = false) {
+            // 统计每种颜色的宝石位置
+            const colorMap = {};
+            
+            for (let i = 0; i < 9; i++) {
+                if (gameState.gems[i] !== undefined && gameState.gems[i] !== null) {
+                    if (!colorMap[gameState.gems[i]]) {
+                        colorMap[gameState.gems[i]] = [];
+                    }
+                    colorMap[gameState.gems[i]].push(i);
+                }
+            }
+            
+            let pairCount = 0;
+            const matchedIndices = [];
+            
+            // 寻找对子（改进版：不相邻的也能消除）
+            for (const color in colorMap) {
+                const positions = colorMap[color];
+                const pairs = Math.floor(positions.length / 2);
+                
+                if (pairs > 0) {
+                    pairCount += pairs;
+                    
+                    // 记录前2*pairs个位置作为对子
+                    for (let i = 0; i < pairs * 2; i += 2) {
+                        matchedIndices.push(positions[i], positions[i+1]);
+                        
+                        if (!fastMode) {
+                            // 显示反馈文本
+                            showFeedback(positions[i], `对子+1`, 'feedback-pair');
+                        }
+                    }
+                }
+            }
+            
+            if (pairCount > 0) {
+                gameState.touchCount += pairCount;
+                gameState.reserveGems += pairCount;
+                
+                if (!fastMode) {
+                    addLog(`对子匹配：${pairCount}对，碰数+${pairCount}，备用宝石+${pairCount}`, "match");
+                    
+                    // 播放消除动画
+                    for (const index of matchedIndices) {
+                        const gem = document.querySelector(`.gem[data-index="${index}"]`);
+                        gem.classList.add('removing');
+                        await sleep(150);
+                    }
+                    
+                    await sleep(500);
+                }
+                
+                // 移除匹配的宝石
+                matchedIndices.forEach(index => {
+                    gameState.gems[index] = null;
+                });
+                
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // 第5步：补充宝石
+        async function refillGems(fastMode = false) {
+            let refilled = 0;
+            const refillIndices = [];
+            
+            // 从左至右、从上至下的顺序补充
+            for (let i = 0; i < 9; i++) {
+                if (gameState.gems[i] === null && gameState.reserveGems > 0) {
+                    gameState.gems[i] = Math.floor(Math.random() * COLORS.length);
+                    gameState.reserveGems--;
+                    refilled++;
+                    refillIndices.push(i);
+                }
+            }
+            
+            if (refilled > 0) {
+                if (!fastMode) {
+                    addLog(`补充宝石：${refilled}个，消耗${refilled}个备用宝石`, "normal");
+                    
+                    // 播放补充动画
+                    for (const index of refillIndices) {
+                        const gem = document.querySelector(`.gem[data-index="${index}"]`);
+                        gem.classList.add('appearing');
+                        await sleep(150);
+                    }
+                    
+                    await sleep(500);
+                }
+            }
+        }
+        
+        // 显示反馈文本
+        function showFeedback(index, text, className) {
+            const gem = document.querySelector(`.gem[data-index="${index}"]`);
+            const rect = gem.getBoundingClientRect();
+            const gridRect = gameGrid.getBoundingClientRect();
+            
+            const feedback = document.createElement('div');
+            feedback.className = `feedback-text ${className}`;
+            feedback.textContent = text;
+            feedback.style.left = `${rect.left - gridRect.left + rect.width / 2}px`;
+            feedback.style.top = `${rect.top - gridRect.top + rect.height / 2}px`;
+            
+            gameGrid.appendChild(feedback);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                feedback.remove();
+            }, 1500);
+        }
+        
+        // 创建闪光粒子
+        function createSparkle(element) {
+            const rect = element.getBoundingClientRect();
+            const sparkle = document.createElement('div');
+            sparkle.className = 'animated-gem';
+            sparkle.innerHTML = element.innerHTML;
+            sparkle.style.left = `${rect.left + rect.width / 2}px`;
+            sparkle.style.top = `${rect.top + rect.height / 2}px`;
+            
+            // 随机方向
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 50 + Math.random() * 100;
+            const targetX = Math.cos(angle) * distance;
+            const targetY = Math.sin(angle) * distance;
+            
+            sparkle.style.setProperty('--target-pos', `translate(${targetX}px, ${targetY}px)`);
+            
+            document.body.appendChild(sparkle);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                sparkle.remove();
+            }, 1000);
+        }
+        
+        // 添加日志
+        function addLog(message, type = "normal") {
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type} new`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}] ${message}`;
+            
+            gameLog.appendChild(logEntry);
+            
+            // 移除new类，以便下次添加时可以再次触发动画
+            setTimeout(() => {
+                logEntry.classList.remove('new');
+            }, 1000);
+            
+            // 滚动到底部
+            gameLog.scrollTop = gameLog.scrollHeight;
+        }
+        
+        // 更新状态
+        function updateStatus(message) {
+            gameStatus.innerHTML = `<p>${message}</p>`;
+        }
+        
+        // 页面加载完成后初始化游戏
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
