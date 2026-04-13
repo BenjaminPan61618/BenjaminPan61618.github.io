@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JayTI · 周杰伦转世专辑测试</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #e94560;
+            --gold: #ffd700;
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 封面页 */
+        .intro-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+
+        .logo {
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--gold), #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .slogan {
+            font-size: 20px;
+            color: var(--accent);
+            margin-bottom: 50px;
+            font-weight: 500;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent), #ff6b6b);
+            border: none;
+            color: white;
+            padding: 18px 60px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(233, 69, 96, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .album-preview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 50px;
+            padding: 20px;
+        }
+
+        .album-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #444, #222);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .album-dot:nth-child(2) { animation-delay: 0.2s; }
+        .album-dot:nth-child(3) { animation-delay: 0.4s; }
+        .album-dot:nth-child(4) { animation-delay: 0.6s; }
+
+        /* 答题页 */
+        .quiz-page {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--gold));
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.5s ease;
+        }
+
+        .question-number {
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .scale-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .scale {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 5px;
+        }
+
+        .scale-option {
+            flex: 1;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .scale-option:hover {
+            border-color: var(--accent);
+            background: rgba(233, 69, 96, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .scale-option.selected {
+            background: linear-gradient(135deg, var(--accent), #ff6b6b);
+            border-color: var(--accent);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .scale-option.selected-1 { background: rgba(233, 69, 96, 0.3); border-color: var(--accent); }
+        .scale-option.selected-2 { background: rgba(233, 69, 96, 0.5); border-color: var(--accent); }
+        .scale-option.selected-3 { background: linear-gradient(135deg, var(--accent), #ff6b6b); border-color: var(--accent); }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-nav {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--accent), #ff6b6b);
+            color: white;
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* 结果页 */
+        .result-page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 0;
+            animation: fadeIn 1s ease;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-label {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .jayti-type {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 20px;
+            letter-spacing: 8px;
+        }
+
+        .album-cover {
+            width: 280px;
+            height: 280px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #333, #111);
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .album-cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.1) 100%);
+        }
+
+        .album-name {
+            font-size: 28px;
+            font-weight: 900;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .personality-desc {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            color: var(--text-muted);
+            line-height: 1.8;
+            max-width: 400px;
+        }
+
+        .songs-section {
+            width: 100%;
+            max-width: 400px;
+            margin: 30px 0;
+        }
+
+        .songs-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--gold);
+        }
+
+        .song-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .song-card.main {
+            border-left-color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .song-label {
+            font-size: 12px;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .song-card.main .song-label {
+            color: var(--gold);
+        }
+
+        .song-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .song-reason {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, var(--gold), #ffed4a);
+            color: var(--primary);
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .restart-btn {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: var(--text);
+            padding: 14px 30px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            border-color: var(--text);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 分享卡片 */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .share-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 350px;
+            text-align: center;
+            animation: scaleIn 0.3s ease;
+        }
+
+        .share-card-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .share-card-type {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 10px;
+            letter-spacing: 4px;
+        }
+
+        .share-card-album {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .share-card-song {
+            font-size: 14px;
+            color: var(--accent);
+            margin-bottom: 30px;
+        }
+
+        .share-card-logo {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .share-card-name {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 维度展示 */
+        .dimensions-display {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .dim-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .dim-name {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .dim-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .dim-a { color: #7dd3fc; }
+        .dim-b { color: #fda4af; }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes scaleIn {
+            from { 
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .title { font-size: 28px; }
+            .question-text { font-size: 18px; }
+            .scale-option { height: 45px; font-size: 16px; }
+            .album-cover { width: 240px; height: 240px; }
+        }
+
+        /* 进度动画 */
+        .calculating {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .calc-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .calc-text {
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 封面页 -->
+        <div class="intro-page" id="introPage">
+            <div class="logo">🎵</div>
+            <h1 class="title">JayTI</h1>
+            <p class="subtitle">周杰伦转世专辑测试</p>
+            <p class="slogan">28道生活情景题，揭开你音乐灵魂的终极谜底</p>
+            <button class="btn" onclick="startQuiz()">开始测试</button>
+            <div class="album-preview">
+                <div class="album-dot"></div>
+                <div class="album-dot"></div>
+                <div class="album-dot"></div>
+                <div class="album-dot"></div>
+            </div>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 20px;">
+                测试16张专辑 · 截止《太阳之子》
+            </p>
+        </div>
+
+        <!-- 答题页 -->
+        <div class="quiz-page" id="quizPage">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">第 1/28 题</div>
+            
+            <div class="question-card" id="questionCard">
+                <div class="question-number" id="questionNumber">Q1</div>
+                <div class="question-text" id="questionText"></div>
+                
+                <div class="scale-container">
+                    <span style="font-size: 12px; color: var(--text-muted);">完全不符合</span>
+                    <span style="font-size: 12px; color: var(--text-muted);">完全符合</span>
+                </div>
+                <div class="scale" id="scaleOptions"></div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-nav btn-prev" id="prevBtn" onclick="prevQuestion()" disabled>上一题</button>
+                <button class="btn-nav btn-next" id="nextBtn" onclick="nextQuestion()">下一题</button>
+            </div>
+        </div>
+
+        <!-- 计算中 -->
+        <div class="calculating" id="calculatingPage">
+            <div class="calc-spinner"></div>
+            <div class="calc-text">正在分析你的音乐灵魂...</div>
+        </div>
+
+        <!-- 结果页 -->
+        <div class="result-page" id="resultPage">
+            <div class="result-header">
+                <div class="result-label">你的转世专辑是</div>
+                <div class="jayti-type" id="jaytiType"></div>
+            </div>
+
+            <div class="album-cover" id="albumCover">💿</div>
+            <div class="album-name" id="albumName"></div>
+
+            <div class="personality-desc" id="personalityDesc"></div>
+
+            <div class="songs-section">
+                <div class="songs-title">🎵 代表曲推荐</div>
+                <div class="song-card main" id="mainSongCard">
+                    <div class="song-label">核心代表曲</div>
+                    <div class="song-name" id="mainSongName"></div>
+                    <div class="song-reason" id="mainSongReason"></div>
+                </div>
+                <div class="song-card" id="secondarySongs"></div>
+            </div>
+
+            <button class="share-btn" onclick="showShareModal()">📤 生成分享卡片</button>
+            <button class="restart-btn" onclick="restartQuiz()">🔄 重新测试</button>
+        </div>
+    </div>
+
+    <!-- 分享弹窗 -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-card">
+            <button class="close-modal" onclick="closeShareModal()">×</button>
+            <div class="share-card-logo">🎵</div>
+            <div class="share-card-name">JayTI · 周杰伦转世专辑测试</div>
+            <div style="height: 30px;"></div>
+            <div class="share-card-title">我的转世人格</div>
+            <div class="share-card-type" id="shareType"></div>
+            <div class="share-card-album" id="shareAlbum"></div>
+            <div class="share-card-song" id="shareSong"></div>
+            <div class="share-card-name">🎵 测试你的转世专辑</div>
+        </div>
+    </div>
+
+    <script>
+        // 题目数据
+        const questions = [
+            {
+                id: 1,
+                text: '周五下班/放学后，你接到两个邀约：A是去热闹的聚会认识新朋友，B是回家窝着看一部收藏已久的电影。你更倾向B而不是A。',
+                dims: { D1: 1 }
+            },
+            {
+                id: 2,
+                text: '你在一个陌生的城市迷路了，手机只剩10%电量。你会先凭直觉走一段看看，而不是立刻找人问路。',
+                dims: { D1: 1, D2: 1 }
+            },
+            {
+                id: 3,
+                text: '朋友因为误会跟你生气，你第一反应不是冲上去解释清楚，而是先写一段很长的文字发过去，甚至想等对方冷静后再聊。',
+                dims: { D1: 1, D2: 1 }
+            },
+            {
+                id: 4,
+                text: '你正在完成一项重要工作或作业，突然有人找你闲聊。你会暗示对方「现在不方便」，等忙完再主动联系。',
+                dims: { D1: 1, D4: -1 }
+            },
+            {
+                id: 5,
+                text: '参加婚礼或庆典时，你通常坐在角落观察全场，而不是主动上台参与游戏或抢捧花。',
+                dims: { D1: 1 }
+            },
+            {
+                id: 6,
+                text: '你心里藏着一个很大的目标或野心，但你很少挂在嘴边，更倾向于做成之后再让所有人看到。',
+                dims: { D2: 1, D4: 1 }
+            },
+            {
+                id: 7,
+                text: '朋友失恋痛哭，你更擅长默默陪着、递纸巾或帮忙点外卖，而不是说出很多安慰或开导的话。',
+                dims: { D1: 1, D2: 1 }
+            },
+            {
+                id: 8,
+                text: '逛美术馆或博物馆时，你在一幅看不懂的抽象画前驻足很久，试图理解画家的意图，而不是直接走开看下一幅。',
+                dims: { D2: 1, D3: -1 }
+            },
+            {
+                id: 9,
+                text: '你去一家新餐厅，菜单上有一道名字很奇怪、不知道是什么的菜，你反而很想点来尝尝。',
+                dims: { D2: 1 }
+            },
+            {
+                id: 10,
+                text: '朋友提议假期去一个需要爬山涉水的野外露营地，你的第一反应是兴奋，而不是担心条件艰苦。',
+                dims: { D3: 1, D4: 1 }
+            },
+            {
+                id: 11,
+                text: '如果要去旅行一周，你更愿意去京都看枯山水和古寺，而不是去纽约看摩天大楼和百老汇。',
+                dims: { D3: 1 }
+            },
+            {
+                id: 12,
+                text: '在KTV里，哪怕五音不全，只要前奏一响是你喜欢的歌，你就会抢麦克风大声唱出来，完全不管别人怎么看你。',
+                dims: { D1: -1, D4: 1 }
+            },
+            {
+                id: 13,
+                text: '你的手机相册里，风景、天空、食物的照片远比自己的自拍多得多。',
+                dims: { D1: 1, D2: 1 }
+            },
+            {
+                id: 14,
+                text: '你有一个坚持了三年以上的爱好，比如练字、弹琴、拼模型，而且大部分时间都是独自完成的。',
+                dims: { D1: 1, D4: 1 }
+            },
+            {
+                id: 15,
+                text: '别人评价你笑点很奇怪或者泪点很奇怪，你觉得很正常，因为你经常被冷门的细节打动。',
+                dims: { D2: 1 }
+            },
+            {
+                id: 16,
+                text: '你宁愿花一小时研究说明书把东西修好或组装好，也不愿意直接打电话叫人来帮忙。',
+                dims: { D1: 1, D4: 1 }
+            },
+            {
+                id: 17,
+                text: '你在社交场合认识了新朋友，主动加微信或留联系方式的一般是对方，而不是你。',
+                dims: { D1: 1 }
+            },
+            {
+                id: 18,
+                text: '你有一套自己非常坚持的、旁人看来有点小固执的生活仪式感，比如喝饮料必须用特定杯子、睡前必须整理桌面。',
+                dims: { D2: 1, D3: 1 }
+            },
+            {
+                id: 19,
+                text: '遇到挫折时，比起找人诉苦，你更习惯先自己消化一阵，听音乐或者去打一场球或跑个步。',
+                dims: { D1: 1, D2: 1 }
+            },
+            {
+                id: 20,
+                text: '你在做一个决定前，会习惯性地在脑海里推演各种可能发生的最坏情况。',
+                dims: { D2: 1 }
+            },
+            {
+                id: 21,
+                text: '你发朋友圈或社交媒体之前，会仔细斟酌文案和图片排版，有时编辑好了又删掉不发。',
+                dims: { D1: 1, D2: 1 }
+            },
+            {
+                id: 22,
+                text: '对于规则和传统，你的态度通常是先了解为什么要这样，再决定遵不遵守。',
+                dims: { D2: 1, D3: 1 }
+            },
+            {
+                id: 23,
+                text: '闭上眼睛想象：深夜的古堡书房，窗外下着大雨，壁炉里的柴火噼啪作响。这种氛围让你感到内心平静甚至愉悦，而不是害怕或压抑。',
+                dims: { D2: 1, D3: 1 }
+            },
+            {
+                id: 24,
+                text: '如果把你比作一种天气，你觉得自己更像是深秋连绵的阴雨天，而不是盛夏炽热的艳阳天。',
+                dims: { D1: 1, D2: 1 }
+            },
+            {
+                id: 25,
+                text: '比起观看一场盛大的烟花表演，你更愿意在傍晚的湖边看夕阳一点点沉下去。',
+                dims: { D1: 1, D3: 1, D4: -1 }
+            },
+            {
+                id: 26,
+                text: '你用微信聊天时，更习惯用完整的句子表达，哪怕带标点，而不是连续发很多条短语音或者短词轰炸。',
+                dims: { D1: 1, D2: 1 }
+            },
+            {
+                id: 27,
+                text: '你开玩笑的方式经常需要对方绕个弯才能懂，甚至是带着一点冷幽默或黑色幽默。',
+                dims: { D2: 1 }
+            },
+            {
+                id: 28,
+                text: '如果用一个成语来形容你向往的生活状态，你更倾向闲云野鹤，而不是灯红酒绿。',
+                dims: { D1: 1, D3: 1, D4: -1 }
+            }
+        ];
+
+        // 专辑映射表
+        const albumMap = {
+            'AAAA': { name: '范特西', songs: ['双截棍', '爱在西元前', '威廉古堡'], emoji: '🎸' },
+            'AAAB': { name: '叶惠美', songs: ['以父之名', '东风破', '晴天'], emoji: '🎹' },
+            'AABA': { name: '依然范特西', songs: ['夜的第七章', '千里之外', '本草纲目'], emoji: '🎧' },
+            'AABB': { name: '十一月的萧邦', songs: ['夜曲', '发如雪', '一路向北'], emoji: '🎻' },
+            'ABAA': { name: '七里香', songs: ['七里香', '我的地盘', '借口'], emoji: '🌿' },
+            'ABAB': { name: '我很忙', songs: ['青花瓷', '彩虹', '蒲公英的约定'], emoji: '🏺' },
+            'ABBA': { name: 'Jay', songs: ['可爱女人', '星晴', '龙卷风'], emoji: '⭐' },
+            'ABBB': { name: '最伟大的作品', songs: ['最伟大的作品', '还在流浪', '红颜如霜'], emoji: '🎨' },
+            'BAAA': { name: '八度空间', songs: ['半兽人', '龙拳', '爷爷泡的茶'], emoji: '🥋' },
+            'BAAB': { name: '跨时代', songs: ['烟花易冷', '雨下一整晚', '跨时代'], emoji: '🌧️' },
+            'BABA': { name: '魔杰座', songs: ['龙战骑士', '给我一首歌的时间', '说好的幸福呢'], emoji: '🐉' },
+            'BABB': { name: '周杰伦的床边故事', songs: ['床边故事', '前世情人', '不该'], emoji: '📖' },
+            'BBAA': { name: '十二新作', songs: ['红尘客栈', '明明就', '公公偏头痛'], emoji: '⚔️' },
+            'BBAB': { name: '哎呦，不错哦', songs: ['鞋子特大号', '算什么男人', '听见下雨的声音'], emoji: '👞' },
+            'BBBA': { name: '惊叹号', songs: ['水手怕水', 'Mine Mine', '超跑女神'], emoji: '🚀' },
+            'BBBB': { name: '太阳之子', songs: ['太阳之子', '圣诞星', '红颜如霜'], emoji: '☀️' }
+        };
+
+        // 人格描述
+        const personalityDescs = {
+            'AAAA': '你是一个深沉内敛、充满东方韵味又不失热血的灵魂。在音乐偏好上，你可能被充满叙事性和文化底蕴的作品所吸引。',
+            'AAAB': '你是那种外表沉静、内心世界极其丰富的类型。既有东方的含蓄之美，又保持着对美好的向往和追求。',
+            'AABA': '你是一个充满神秘感、追求品位的都市灵魂。喜欢有深度的叙事歌曲，对东西方文化都有独到的欣赏。',
+            'AABB': '你有着忧郁诗人的气质，情感细腻而深沉。喜欢有故事感的音乐，对美有着近乎执着的追求。',
+            'ABAA': '你是那个在阳光下最耀眼的存在，青春、热血、充满活力。简单的快乐就能让你满足。',
+            'ABAB': '你是一个浪漫主义者，内心柔软而富有诗意。既有传统情怀又懂得享受生活的小确幸。',
+            'ABBA': '你是纯真年代的最佳代言人，怀念简单美好的事物。在音乐中寻找青春的记忆和感动。',
+            'ABBB': '你是一个现代浪漫主义者，追求品质与格调。既有艺术气质又不失幽默感的生活方式。',
+            'BAAA': '你是那个在人群中永远最活跃的灵魂，充满能量和感染力。热爱传统文化又敢于突破创新。',
+            'BAAB': '你是古典与现代的完美结合，在传统中寻找永恒的美。情感深沉但不外露，需要细细品味。',
+            'BABA': '你是一个充满正义感的热血青年，在朋友中通常是那个最可靠的存在。',
+            'BABB': '你有着丰富的想象力和叙事天赋，喜欢用故事来表达内心世界。',
+            'BBAA': '你是那个永远充满活力的开心果，在任何场合都能带来欢乐。喜欢传统元素又不失幽默。',
+            'BBAB': '你是一个懂得享受生活的优雅派，在平凡中发现不平凡的美好。',
+            'BBBA': '你是一个永葆童心的快乐制造者，对世界永远充满好奇和热情。',
+            'BBBB': '你是一个优雅从容的生活艺术家，在任何环境下都能保持自己的节奏和格调。'
+        };
+
+        // 状态
+        let currentQuestion = 0;
+        let answers = new Array(28).fill(null);
+        let shuffledQuestions = [];
+
+        // 打乱题目顺序
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // 开始测试
+        function startQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            answers = new Array(28).fill(null);
+            
+            document.getElementById('introPage').style.display = 'none';
+            document.getElementById('quizPage').style.display = 'flex';
+            renderQuestion();
+        }
+
+        // 渲染题目
+        function renderQuestion() {
+            const q = shuffledQuestions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `Q${currentQuestion + 1}`;
+            document.getElementById('questionText').textContent = q.text;
+            
+            const progress = ((currentQuestion + 1) / 28) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `第 ${currentQuestion + 1}/28 题`;
+            
+            // 渲染选项
+            const scaleOptions = document.getElementById('scaleOptions');
+            scaleOptions.innerHTML = '';
+            
+            const values = [-3, -2, -1, 0, 1, 2, 3];
+            const labels = ['-3', '-2', '-1', '0', '+1', '+2', '+3'];
+            
+            values.forEach((val, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'scale-option';
+                btn.textContent = labels[idx];
+                btn.onclick = () => selectAnswer(val);
+                
+                // 如果之前选过，恢复状态
+                if (answers[currentQuestion] === val) {
+                    const intensity = Math.abs(val);
+                    if (intensity > 0) {
+                        btn.classList.add(`selected-${intensity}`);
+                    }
+                    btn.classList.add('selected');
+                }
+                
+                scaleOptions.appendChild(btn);
+            });
+            
+            // 更新按钮状态
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').textContent = currentQuestion === 27 ? '查看结果' : '下一题';
+            document.getElementById('nextBtn').disabled = answers[currentQuestion] === null;
+        }
+
+        // 选择答案
+        function selectAnswer(value) {
+            answers[currentQuestion] = value;
+            renderQuestion();
+        }
+
+        // 上一题
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (answers[currentQuestion] === null) {
+                return;
+            }
+            
+            if (currentQuestion < 27) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                calculateResult();
+            }
+        }
+
+        // 计算结果
+        function calculateResult() {
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('calculatingPage').style.display = 'flex';
+            
+            setTimeout(() => {
+                // 计算四个维度得分
+                const scores = { D1: 0, D2: 0, D3: 0, D4: 0 };
+                
+                shuffledQuestions.forEach((q, idx) => {
+                    const answer = answers[idx];
+                    if (answer !== null) {
+                        Object.entries(q.dims).forEach(([dim, direction]) => {
+                            scores[dim] += answer * direction;
+                        });
+                    }
+                });
+                
+                // 确定倾向
+                const tendencies = {
+                    D1: scores.D1 >= 0 ? 'A' : 'B',
+                    D2: scores.D2 >= 0 ? 'A' : 'B',
+                    D3: scores.D3 >= 0 ? 'A' : 'B',
+                    D4: scores.D4 >= 0 ? 'A' : 'B'
+                };
+                
+                const jaytiType = tendencies.D1 + tendencies.D2 + tendencies.D3 + tendencies.D4;
+                const album = albumMap[jaytiType];
+                
+                // 确定主导维度
+                const absScores = {
+                    D1: Math.abs(scores.D1),
+                    D2: Math.abs(scores.D2),
+                    D3: Math.abs(scores.D3),
+                    D4: Math.abs(scores.D4)
+                };
+                
+                // 按优先级排序: D2 > D3 > D4 > D1
+                const dimPriority = ['D2', 'D3', 'D4', 'D1'];
+                let dominantDim = 'D2';
+                let maxScore = 0;
+                
+                for (const dim of dimPriority) {
+                    if (absScores[dim] > maxScore) {
+                        maxScore = absScores[dim];
+                        dominantDim = dim;
+                    }
+                }
+                
+                // 选择代表曲
+                let mainSong, reason;
+                const dominantTendency = tendencies[dominantDim];
+                
+                if (dominantDim === 'D2') {
+                    mainSong = dominantTendency === 'A' ? album.songs[0] : '简单爱';
+                    reason = dominantTendency === 'A' 
+                        ? '你的情感深沉而细腻，被充满叙事张力的歌曲所打动' 
+                        : '你向往纯粹而明媚的情感，简单的快乐最能触动你';
+                } else if (dominantDim === 'D3') {
+                    mainSong = dominantTendency === 'A' ? (album.songs.includes('青花瓷') ? '青花瓷' : album.songs[1]) : (album.songs.includes('龙战骑士') ? '龙战骑士' : album.songs[0]);
+                    reason = dominantTendency === 'A'
+                        ? '你骨子里有着东方审美，对传统韵味有着独特的偏爱'
+                        : '你喜欢国际化、节奏感强的音乐风格';
+                } else if (dominantDim === 'D4') {
+                    mainSong = dominantTendency === 'A' ? (album.songs.includes('双截棍') ? '双截棍' : album.songs[0]) : (album.songs.includes('晴天') ? '晴天' : album.songs[1]);
+                    reason = dominantTendency === 'A'
+                        ? '你内心住着一个热血少年，喜欢有力量感的节奏'
+                        : '你追求从容优雅的生活态度，慢歌最能引起共鸣';
+                } else {
+                    mainSong = album.songs[0];
+                    reason = '你的能量来源偏向内心，更欣赏深沉内敛的表达方式';
+                }
+                
+                // 次推荐曲
+                const secondarySongs = album.songs.filter(s => s !== mainSong);
+                
+                // 渲染结果
+                document.getElementById('calculatingPage').style.display = 'none';
+                document.getElementById('resultPage').style.display = 'flex';
+                
+                document.getElementById('jaytiType').textContent = 
+                    `${tendencies.D1 === 'A' ? '独' : '合'}·${tendencies.D2 === 'A' ? '暗' : '阳'}·${tendencies.D3 === 'A' ? '东' : '西'}·${tendencies.D4 === 'A' ? '热' : '雅'}`;
+                
+                document.getElementById('albumCover').textContent = album.emoji;
+                document.getElementById('albumName').textContent = album.name;
+                document.getElementById('personalityDesc').textContent = personalityDescs[jaytiType];
+                document.getElementById('mainSongName').textContent = mainSong;
+                document.getElementById('mainSongReason').textContent = reason;
+                
+                document.getElementById('secondarySongs').innerHTML = `
+                    <div class="song-label">次推荐曲</div>
+                    <div class="song-name">${secondarySongs.join(' · ')}</div>
+                `;
+                
+                // 分享信息
+                document.getElementById('shareType').textContent = 
+                    `${tendencies.D1 === 'A' ? '独' : '合'}·${tendencies.D2 === 'A' ? '暗' : '阳'}·${tendencies.D3 === 'A' ? '东' : '西'}·${tendencies.D4 === 'A' ? '热' : '雅'}`;
+                document.getElementById('shareAlbum').textContent = album.name;
+                document.getElementById('shareSong').textContent = `代表曲：${mainSong}`;
+                
+            }, 2000);
+        }
+
+        // 显示分享弹窗
+        function showShareModal() {
+            document.getElementById('shareModal').style.display = 'flex';
+        }
+
+        // 关闭分享弹窗
+        function closeShareModal() {
+            document.getElementById('shareModal').style.display = 'none';
+        }
+
+        // 重新测试
+        function restartQuiz() {
+            document.getElementById('resultPage').style.display = 'none';
+            document.getElementById('introPage').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
